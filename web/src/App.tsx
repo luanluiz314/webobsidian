@@ -34,7 +34,7 @@ export default function App() {
   const save = useStore((s) => s.save);
   const toast = useStore((s) => s.toast);
   const [checking, setChecking] = useState(true);
-  const [theme, setTheme] = useState<'theme-dark' | 'theme-light'>('theme-light');
+  const [theme, setTheme] = useState<'theme-dark' | 'theme-light'>('theme-dark');
 
   useEffect(() => {
     api
@@ -65,7 +65,7 @@ export default function App() {
       .catch(() => {});
     api
       .getSettings()
-      .then((s) => setTheme(s?.ui?.theme === 'obsidian-dark' ? 'theme-dark' : 'theme-light'))
+      .then((s) => setTheme(s?.ui?.theme === 'obsidian-light' ? 'theme-light' : 'theme-dark'))
       .catch(() => {});
     useStore.getState().loadShares(); // badge shared notes in the file tree
     loadPlugins().catch(() => {});

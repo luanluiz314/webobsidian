@@ -27,7 +27,7 @@ export default function ShareDialog() {
   const create = async () => {
     await api.createShare(path);
     await loadShares();
-    notify('Public link created');
+    notify('Link público criado');
   };
   const toggle = async () => {
     if (!share) return;
@@ -36,7 +36,7 @@ export default function ShareDialog() {
   };
   const copy = () => {
     navigator.clipboard?.writeText(url).catch(() => {});
-    notify('Public link copied');
+    notify('Link público copiado');
   };
   const password = async () => {
     if (!share) return;
@@ -48,14 +48,14 @@ export default function ShareDialog() {
     if (pw === null) return;
     await api.setSharePassword(share.id, pw || null);
     await loadShares();
-    notify(pw ? 'Password set' : 'Password removed');
+    notify(pw ? 'Senha definida' : 'Senha removida');
   };
   const remove = async () => {
     if (!share) return;
-    if (!confirm('Delete this public link? The URL stops working permanently.')) return;
+    if (!confirm('Excluir este link público? A URL deixará de funcionar definitivamente.')) return;
     await api.deleteShare(share.id);
     await loadShares();
-    notify('Public link deleted');
+    notify('Link público excluído');
   };
 
   return (
@@ -72,10 +72,10 @@ export default function ShareDialog() {
         {!share && (
           <>
             <p className="share-dialog-hint">
-              Create a public link so <b>anyone with the URL</b> can read this note without login.
+              Crie um link público para que <b>qualquer pessoa com a URL</b> possa ler esta nota sem entrar na conta.
             </p>
             <button className="btn" onClick={create}>
-              <Icon name="globe" size={14} /> Create public link
+              <Icon name="globe" size={14} /> Criar link público
             </button>
           </>
         )}
@@ -84,10 +84,10 @@ export default function ShareDialog() {
           <>
             <div className="setting-row">
               <div className="info">
-                <div className="name">Public link</div>
+                <div className="name">Link público</div>
                 <div className="desc">{share.enabled ? 'Anyone with the URL can view this note' : 'Sharing is paused — the URL returns 404'}</div>
               </div>
-              <button className={`graph-switch ${share.enabled ? 'on' : ''}`} onClick={toggle} aria-label="Toggle public link">
+              <button className={`graph-switch ${share.enabled ? 'on' : ''}`} onClick={toggle} aria-label="Ativar/desativar link público">
                 <span className="graph-knob" />
               </button>
             </div>
@@ -95,13 +95,13 @@ export default function ShareDialog() {
             {share.enabled && (
               <div className="share-url">
                 <input className="text-input" readOnly value={url} onFocus={(e) => e.currentTarget.select()} />
-                <button className="btn" onClick={copy}><Icon name="link" size={14} /> Copy</button>
+                <button className="btn" onClick={copy}><Icon name="link" size={14} /> Copiar</button>
               </div>
             )}
 
             <div className="setting-row">
               <div className="info">
-                <div className="name">Password protection</div>
+                <div className="name">Proteção por senha</div>
                 <div className="desc">{share.hasPassword ? 'Visitors must enter a password' : 'Anyone with the link can open it'}</div>
               </div>
               <button className="btn secondary" onClick={password}>
@@ -111,16 +111,16 @@ export default function ShareDialog() {
 
             <div className="setting-row">
               <div className="info">
-                <div className="name">Delete link</div>
-                <div className="desc">Revokes the URL permanently</div>
+                <div className="name">Excluir link</div>
+                <div className="desc">Revoga a URL permanentemente</div>
               </div>
-              <button className="btn danger" onClick={remove}>Delete</button>
+              <button className="btn danger" onClick={remove}>Excluir</button>
             </div>
           </>
         )}
 
         <div className="share-dialog-foot">
-          <button className="btn secondary" onClick={close}>Done</button>
+          <button className="btn secondary" onClick={close}>Concluído</button>
         </div>
       </div>
     </div>

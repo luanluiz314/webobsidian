@@ -26,13 +26,13 @@ export default function Ribbon({ onTheme }: { onTheme: () => void }) {
   const sync = async () => {
     if (syncing) return;
     setSyncing(true);
-    notify('Syncing…');
+    notify('Sincronizando…');
     try {
       const r = await api.gitSync();
-      notify(r.ok ? 'Synced ✓' : `Sync: ${r.log.at(-1)}`);
+      notify(r.ok ? 'Sincronizado ✓' : `Sincronização: ${r.log.at(-1)}`);
       await loadTree();
     } catch (e: any) {
-      notify(`Sync failed: ${e.message}`);
+      notify(`Falha na sincronização: ${e.message}`);
     } finally {
       setSyncing(false);
     }
@@ -40,37 +40,37 @@ export default function Ribbon({ onTheme }: { onTheme: () => void }) {
 
   return (
     <div className="ribbon">
-      <button className={leftPanel === 'files' ? 'active' : ''} title="Files" onClick={() => setLeftPanel('files')}>
+      <button className={leftPanel === 'files' ? 'ativo' : ''} title="Arquivos" onClick={() => setLeftPanel('files')}>
         <Icon name="file-text" size={18} />
       </button>
-      <button className={leftPanel === 'search' ? 'active' : ''} title="Search (⌘⇧F)" onClick={() => setLeftPanel('search')}>
+      <button className={leftPanel === 'search' ? 'ativo' : ''} title="Pesquisar (⌘⇧F)" onClick={() => setLeftPanel('search')}>
         <Icon name="search" size={18} />
       </button>
-      <button title="Graph view" onClick={() => setGraph(true)}>
+      <button title="Visualização em grafo" onClick={() => setGraph(true)}>
         <Icon name="graph" size={18} />
       </button>
-      <button className={leftPanel === 'bookmarks' ? 'active' : ''} title="Bookmarks & recent" onClick={() => setLeftPanel('bookmarks')}>
+      <button className={leftPanel === 'bookmarks' ? 'ativo' : ''} title="Favoritos e recentes" onClick={() => setLeftPanel('bookmarks')}>
         <Icon name="bookmark" size={18} />
       </button>
-      <button title="Daily note" onClick={() => openDailyNote()}>
+      <button title="Nota diária" onClick={() => openDailyNote()}>
         <Icon name="calendar" size={18} />
       </button>
-      <button className={leftPanel === 'tags' ? 'active' : ''} title="Tags" onClick={() => setLeftPanel('tags')}>
+      <button className={leftPanel === 'tags' ? 'ativo' : ''} title="Etiquetas" onClick={() => setLeftPanel('tags')}>
         <Icon name="hash" size={18} />
       </button>
-      <button title="Command palette (⌘P)" onClick={() => setPalette(true, 'commands')}>
+      <button title="Paleta de comandos (⌘P)" onClick={() => setPalette(true, 'commands')}>
         <Icon name="command" size={18} />
       </button>
       <div className="spacer" />
       {gitEnabled && (
-        <button title={syncing ? 'Syncing…' : 'Sync now'} onClick={sync} disabled={syncing}>
+        <button title={syncing ? 'Sincronizando…' : 'Sincronizar agora'} onClick={sync} disabled={syncing}>
           <Icon name="refresh-cw" size={18} style={syncing ? { animation: 'spin 1s linear infinite' } : undefined} />
         </button>
       )}
-      <button title="Toggle theme" onClick={onTheme}>
+      <button title="Alternar tema" onClick={onTheme}>
         <Icon name="moon" size={18} />
       </button>
-      <button title="Settings" onClick={() => setSettings(true)}>
+      <button title="Configurações" onClick={() => setSettings(true)}>
         <Icon name="settings" size={18} />
       </button>
     </div>

@@ -20,7 +20,7 @@ function collectFolders(node: TreeNode | null): string[] {
 }
 
 /**
- * Obsidian's "Move file to…" folder suggester: type to filter folders, ↑↓ to
+ * Obsidian's "Mover arquivo para…" folder suggester: type to filter folders, ↑↓ to
  * navigate, ↵ to move into the highlighted folder, shift+↵ to create the typed
  * folder and move there, esc to dismiss. Driven by store.movePath.
  */
@@ -94,7 +94,7 @@ export default function FolderPicker() {
         if (activePath === src) reopen = to;
         moved++;
       } catch (e: any) {
-        notify(e?.message ?? 'Move failed');
+        notify(e?.message ?? 'Falha ao mover');
       }
     }
     await loadTree();
@@ -102,7 +102,7 @@ export default function FolderPicker() {
     if (reopen) await openFile(reopen);
     if (moved) {
       const dest = folder || 'vault root';
-      notify(moved > 1 ? `Moved ${moved} items to ${dest}` : `Moved to ${dest}`);
+      notify(moved > 1 ? `${moved} itens movidos para ${dest}` : `Movido para ${dest}`);
     }
   };
 
@@ -154,13 +154,13 @@ export default function FolderPicker() {
               <span className="kbd">⇧↵</span>
             </div>
           )}
-          {matches.length === 0 && !canCreate && <div className="palette-item">No folders</div>}
+          {matches.length === 0 && !canCreate && <div className="palette-item">Nenhuma pasta</div>}
         </div>
         <div className="palette-footer">
-          <span><span className="kbd">↑↓</span> to navigate</span>
-          <span><span className="kbd">↵</span> to move</span>
-          <span><span className="kbd">⇧↵</span> to create</span>
-          <span><span className="kbd">esc</span> to dismiss</span>
+          <span><span className="kbd">↑↓</span> para navegar</span>
+          <span><span className="kbd">↵</span> para mover</span>
+          <span><span className="kbd">⇧↵</span> para criar</span>
+          <span><span className="kbd">esc</span> para fechar</span>
         </div>
       </div>
     </div>

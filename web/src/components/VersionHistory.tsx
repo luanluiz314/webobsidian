@@ -46,20 +46,20 @@ export default function VersionHistory() {
 
   const restore = async () => {
     if (!selected) return;
-    if (!confirm('Restore this version? The current content will be overwritten.')) return;
+    if (!confirm('Restaurar esta versão? O conteúdo atual será substituído.')) return;
     try {
       await api.write(path, preview);
       if (path === activePath) await openFile(path);
-      notify('Restored earlier version');
+      notify('Versão anterior restaurada');
       close(null);
     } catch (e: any) {
-      notify(e.message || 'Restore failed');
+      notify(e.message || 'Falha ao restaurar');
     }
   };
 
   const fmtDate = (iso: string) => {
     const d = new Date(iso);
-    return isNaN(d.getTime()) ? iso : d.toLocaleString();
+    return isNaN(d.getTime()) ? iso : d.toLocaleString('pt-BR');
   };
 
   return (
@@ -67,23 +67,23 @@ export default function VersionHistory() {
       <div className="modal version-history" onClick={(e) => e.stopPropagation()}>
         <div className="vh-head">
           <Icon name="clock" size={16} />
-          <div className="vh-title">Version history</div>
+          <div className="vh-title">Histórico de versões</div>
           <div className="vh-path">{path}</div>
-          <button className="tool-btn" title="Close" onClick={() => close(null)}>
+          <button className="tool-btn" title="Fechar" onClick={() => close(null)}>
             <Icon name="x" size={16} />
           </button>
         </div>
         <div className="vh-body">
           <div className="vh-list">
-            {loading && <div className="vh-empty">Loading…</div>}
+            {loading && <div className="vh-empty">Carregando…</div>}
             {error && <div className="vh-empty">{error}</div>}
             {!loading && !error && commits.length === 0 && (
-              <div className="vh-empty">No history. Enable Git Sync to track versions.</div>
+              <div className="vh-empty">Sem histórico. Ative a sincronização Git para acompanhar as versões.</div>
             )}
             {commits.map((c, i) => (
               <div
                 key={c.hash}
-                className={`vh-item ${selected === c.hash ? 'active' : ''}`}
+                className={`vh-item ${selected === c.hash ? 'ativo' : ''}`}
                 onClick={() => setSelected(c.hash)}
               >
                 <div className="vh-item-msg">
@@ -101,10 +101,10 @@ export default function VersionHistory() {
         </div>
         <div className="vh-foot">
           <button className="btn secondary" onClick={() => close(null)}>
-            Close
+            Fechar
           </button>
           <button className="btn" onClick={restore} disabled={!selected || commits.length === 0}>
-            Restore this version
+            Restaurar esta versão
           </button>
         </div>
       </div>

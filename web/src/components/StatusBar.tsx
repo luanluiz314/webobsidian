@@ -22,14 +22,14 @@ export default function StatusBar() {
   const sync = async () => {
     if (syncing) return;
     setSyncing(true);
-    notify('Syncing…');
+    notify('Sincronizando…');
     try {
       const r = await api.gitSync();
-      notify(r.ok ? 'Synced ✓' : `Sync: ${r.log.at(-1)}`);
+      notify(r.ok ? 'Sincronizado ✓' : `Sincronização: ${r.log.at(-1)}`);
       await loadTree();
       await refresh();
     } catch (e: any) {
-      notify(`Sync failed: ${e.message}`);
+      notify(`Falha na sincronização: ${e.message}`);
     } finally {
       setSyncing(false);
     }
@@ -46,10 +46,10 @@ export default function StatusBar() {
 
   return (
     <div className="status-bar">
-      {dirty && <span>Saving…</span>}
+      {dirty && <span>Salvando…</span>}
       {isText && <span>{words} words</span>}
       {isText && <span>{content.length} characters</span>}
-      <span className="clickable" title="Git sync" onClick={sync}>
+      <span className="clickable" title="Sincronização Git" onClick={sync}>
         <Icon name="refresh-cw" size={13} style={syncing ? { animation: 'spin 1s linear infinite' } : undefined} />
         {gitLabel}
       </span>

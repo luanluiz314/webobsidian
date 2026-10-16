@@ -78,7 +78,7 @@ function FileNodeBody({ file }: { file: string }) {
         <span className="title">{name.replace(MD_RE, '')}</span>
       </div>
       <div className="canvas-file-body markdown-preview">
-        {isMd ? (md != null ? <Preview source={md} /> : <div className="canvas-loading">Loading…</div>) : (
+        {isMd ? (md != null ? <Preview source={md} /> : <div className="canvas-loading">Carregando…</div>) : (
           <div className="canvas-file-generic">
             <Icon name="file" size={28} />
             <span>{name}</span>
@@ -366,7 +366,7 @@ export default function CanvasView() {
       if (e.code === 'Space' && !isTyping(e.target)) {
         space.current = true;
         if (vpRef.current) vpRef.current.style.cursor = 'grab';
-      } else if ((e.key === 'Delete' || e.key === 'Backspace') && !isTyping(e.target) && !editingNode) {
+      } else if ((e.key === 'Excluir' || e.key === 'Backspace') && !isTyping(e.target) && !editingNode) {
         deleteSelection();
         e.preventDefault();
       } else if (e.key === 'Escape') {
@@ -521,11 +521,11 @@ export default function CanvasView() {
     ];
     const items: ContextMenuItem[] = [
       ...(node.type === 'text' ? [{ label: 'Edit', icon: 'pencil', onClick: () => setEditingNode(node.id) }] : []),
-      ...(node.type === 'file' ? [{ label: 'Open', icon: 'arrow-up-right', onClick: () => openFile((node as any).file) }] : []),
+      ...(node.type === 'file' ? [{ label: 'Abrir', icon: 'arrow-up-right', onClick: () => openFile((node as any).file) }] : []),
       ...(node.type === 'link' ? [{ label: 'Open link', icon: 'globe', onClick: () => window.open((node as any).url, '_blank', 'noopener') }] : []),
-      { label: 'Set color', icon: 'palette', submenu: colorSub },
+      { label: 'Definir cor', icon: 'palette', submenu: colorSub },
       { label: 'Duplicate', icon: 'file-plus', onClick: duplicateSelection },
-      { label: 'Zoom to selection', icon: 'zoom-in', onClick: zoomToSelection },
+      { label: 'Aproximar seleção', icon: 'zoom-in', onClick: zoomToSelection },
       { label: '', separator: true },
       { label: 'Bring to front', onClick: bringToFront },
       { label: 'Send to back', onClick: sendToBack },
@@ -542,7 +542,7 @@ export default function CanvasView() {
           }]
         : []),
       { label: '', separator: true },
-      { label: 'Remove', icon: 'trash', danger: true, onClick: deleteSelection },
+      { label: 'Remover', icon: 'trash', danger: true, onClick: deleteSelection },
     ];
     openContextMenu({ x: e.clientX, y: e.clientY, items });
   };
@@ -730,9 +730,9 @@ export default function CanvasView() {
       { label: 'Footnote', act: () => insertAtCaret('[^1]') },
     ] },
     { sep: true },
-    { label: 'Cut', act: () => doClipboard('cut') },
-    { label: 'Copy', act: () => doClipboard('copy') },
-    { label: 'Paste', act: () => { void doPaste(); } },
+    { label: 'Recortado', act: () => doClipboard('cut') },
+    { label: 'Copiar', act: () => doClipboard('copy') },
+    { label: 'Colar', act: () => { void doPaste(); } },
     { label: 'Select all', act: () => editTaRef.current?.select() },
   ];
 
@@ -829,9 +829,9 @@ export default function CanvasView() {
       const { path } = await api.upload(f);
       const c = viewCenter();
       addFileNode(path, c.x, c.y);
-      notify(`Inserted ${path}`);
+      notify(`Inserido: ${path}`);
     } catch (err: any) {
-      notify(err?.message ?? 'Upload failed');
+      notify(err?.message ?? 'Falha ao enviar arquivo');
     }
   };
 
@@ -1482,7 +1482,7 @@ export default function CanvasView() {
                   />
                 ) : (
                   <div className="canvas-text-body markdown-preview" style={{ textAlign: (n as TextNode).textAlign ?? 'left' }}>
-                    {(n as TextNode).text.trim() ? <Preview source={(n as TextNode).text} /> : <span className="canvas-placeholder">Empty card — double-click to edit</span>}
+                    {(n as TextNode).text.trim() ? <Preview source={(n as TextNode).text} /> : <span className="canvas-placeholder">Cartão vazio — clique duas vezes para editar</span>}
                   </div>
                 )
               )}
@@ -1521,13 +1521,13 @@ export default function CanvasView() {
           onPointerDown={(e) => e.stopPropagation()}
         >
           <div className="canvas-menu-row">
-            <button className="canvas-menu-btn" title="Remove" onClick={deleteSelection}>
+            <button className="canvas-menu-btn" title="Remover" onClick={deleteSelection}>
               <Icon name="trash" size={16} />
             </button>
-            <button className={`canvas-menu-btn ${showColors ? 'active' : ''}`} title="Set color" onClick={() => setShowColors((v) => !v)}>
+            <button className={`canvas-menu-btn ${showColors ? 'ativo' : ''}`} title="Definir cor" onClick={() => setShowColors((v) => !v)}>
               <Icon name="palette" size={16} />
             </button>
-            <button className="canvas-menu-btn" title="Zoom to selection" onClick={zoomToSelection}>
+            <button className="canvas-menu-btn" title="Aproximar seleção" onClick={zoomToSelection}>
               <Icon name="zoom-in" size={16} />
             </button>
             {selHasText && (
@@ -1536,7 +1536,7 @@ export default function CanvasView() {
                 {(['left', 'center', 'right'] as const).map((a) => (
                   <button
                     key={a}
-                    className={`canvas-menu-btn ${curAlign === a ? 'active' : ''}`}
+                    className={`canvas-menu-btn ${curAlign === a ? 'ativo' : ''}`}
                     title={`Align ${a}`}
                     onClick={() => setTextAlign(a)}
                   >
@@ -1548,7 +1548,7 @@ export default function CanvasView() {
             {onlyEdges && (
               <>
                 <span className="canvas-dir-wrap">
-                  <button className={`canvas-menu-btn ${showDir ? 'active' : ''}`} title="Arrow direction" onClick={() => setShowDir((v) => !v)}>
+                  <button className={`canvas-menu-btn ${showDir ? 'ativo' : ''}`} title="Direção da seta" onClick={() => setShowDir((v) => !v)}>
                     <Icon name={curDir === 'non' ? 'minus' : curDir === 'bi' ? 'arrow-left-right' : 'arrow-right'} size={16} />
                   </button>
                   {showDir && (
@@ -1564,13 +1564,13 @@ export default function CanvasView() {
                   )}
                 </span>
                 {selEdgeHasLabel && (
-                  <button className="canvas-menu-btn" title="Remove label" onClick={removeEdgeLabel}>
+                  <button className="canvas-menu-btn" title="Remover rótulo" onClick={removeEdgeLabel}>
                     <Icon name="x" size={16} />
                   </button>
                 )}
                 <button
                   className="canvas-menu-btn"
-                  title="Edit label"
+                  title="Editar rótulo"
                   onClick={() => { const id = Array.from(sel.edges)[0]; if (id) setEditingEdge(id); }}
                 >
                   <Icon name="pencil" size={16} />
@@ -1582,7 +1582,7 @@ export default function CanvasView() {
             <div className="canvas-menu-colors">
               <button
                 className={`canvas-swatch canvas-swatch-default ${!selColor ? 'selected' : ''}`}
-                title="Default color"
+                title="Cor padrão"
                 onClick={() => setColor(undefined)}
               />
               {Object.entries(PRESET_COLORS).map(([k, hex]) => (
@@ -1594,7 +1594,7 @@ export default function CanvasView() {
                   onClick={() => setColor(k)}
                 />
               ))}
-              <label className={`canvas-swatch canvas-swatch-custom ${isCustomColor ? 'selected' : ''}`} title="Custom color…">
+              <label className={`canvas-swatch canvas-swatch-custom ${isCustomColor ? 'selected' : ''}`} title="Cor personalizada…">
                 <input
                   type="color"
                   value={isCustomColor ? (selColor as string) : '#e93147'}
@@ -1609,26 +1609,26 @@ export default function CanvasView() {
 
       {/* Zoom / control toolbar (bottom-left) */}
       <div className="canvas-toolbar canvas-toolbar-zoom" onPointerDown={(e) => e.stopPropagation()}>
-        <button title="Zoom out" onClick={() => zoomBy(1 / 1.2)}><Icon name="indent-decrease" size={16} /></button>
-        <button title="Reset zoom (100%)" className="canvas-zoom-pct" onClick={resetZoom}>{Math.round(view.scale * 100)}%</button>
-        <button title="Zoom in" onClick={() => zoomBy(1.2)}><Icon name="indent-increase" size={16} /></button>
+        <button title="Afastar" onClick={() => zoomBy(1 / 1.2)}><Icon name="indent-decrease" size={16} /></button>
+        <button title="Redefinir zoom (100%)" className="canvas-zoom-pct" onClick={resetZoom}>{Math.round(view.scale * 100)}%</button>
+        <button title="Aproximar" onClick={() => zoomBy(1.2)}><Icon name="indent-increase" size={16} /></button>
         <span className="canvas-tb-sep" />
-        <button title="Zoom to fit" onClick={zoomFit}><Icon name="graph" size={16} /></button>
+        <button title="Ajustar à tela" onClick={zoomFit}><Icon name="graph" size={16} /></button>
         <span className="canvas-tb-sep" />
-        <button title="Undo (⌘Z)" disabled={undoStack.current.length === 0} onClick={undo}><Icon name="undo" size={16} /></button>
-        <button title="Redo (⌘⇧Z)" disabled={redoStack.current.length === 0} onClick={redo}><Icon name="redo" size={16} /></button>
+        <button title="Desfazer (⌘Z)" disabled={undoStack.current.length === 0} onClick={undo}><Icon name="undo" size={16} /></button>
+        <button title="Refazer (⌘⇧Z)" disabled={redoStack.current.length === 0} onClick={redo}><Icon name="redo" size={16} /></button>
         <span style={{ display: 'none' }}>{histV}</span>
       </div>
 
       {/* Add toolbar (bottom-center) — card / note / image, like Obsidian */}
       <div className="canvas-toolbar canvas-toolbar-add" onPointerDown={(e) => e.stopPropagation()}>
-        <button title="Add card (or double-click canvas)" onClick={() => { const c = viewCenter(); addTextNode(c.x, c.y); }}>
+        <button title="Adicionar cartão (ou clique duas vezes no canvas)" onClick={() => { const c = viewCenter(); addTextNode(c.x, c.y); }}>
           <Icon name="file-plus" size={18} />
         </button>
-        <button title="Add card from note" onClick={() => { setNoteFilter(''); setNotePicker((v) => !v); }}>
+        <button title="Adicionar cartão de uma nota" onClick={() => { setNoteFilter(''); setNotePicker((v) => !v); }}>
           <Icon name="file-text" size={18} />
         </button>
-        <button title="Add image" onClick={() => fileInputRef.current?.click()}>
+        <button title="Adicionar imagem" onClick={() => fileInputRef.current?.click()}>
           <Icon name="image" size={18} />
         </button>
       </div>
@@ -1639,13 +1639,13 @@ export default function CanvasView() {
           <input
             className="canvas-notepicker-input"
             autoFocus
-            placeholder="Search notes…"
+            placeholder="Pesquisar notas…"
             value={noteFilter}
             onChange={(e) => setNoteFilter(e.target.value)}
             onKeyDown={(e) => e.key === 'Escape' && setNotePicker(false)}
           />
           <div className="canvas-notepicker-list">
-            {filteredNotes.length === 0 && <div className="canvas-notepicker-empty">No files</div>}
+            {filteredNotes.length === 0 && <div className="canvas-notepicker-empty">Nenhum arquivo</div>}
             {filteredNotes.map((f) => (
               <button
                 key={f.path}
@@ -1682,7 +1682,7 @@ export default function CanvasView() {
             className="canvas-dropmenu-item"
             onClick={() => { addConnectedTextNode(edgeDrop.cx, edgeDrop.cy, edgeDrop.edgeId, edgeDrop.end); setEdgeDrop(null); }}
           >
-            <Icon name="file-plus" size={15} /> Add card
+            <Icon name="file-plus" size={15} /> Adicionar cartão
           </button>
           <button
             className="canvas-dropmenu-item"
@@ -1693,7 +1693,7 @@ export default function CanvasView() {
               setEdgeDrop(null);
             }}
           >
-            <Icon name="file-text" size={15} /> Add note from vault
+            <Icon name="file-text" size={15} /> Adicionar nota do cofre
           </button>
         </div>
       )}
@@ -1713,7 +1713,7 @@ export default function CanvasView() {
           <input
             className="canvas-notepicker-input"
             autoFocus
-            placeholder="Link to note…"
+            placeholder="Vincular a uma nota…"
             value={linkFilter}
             onChange={(e) => setLinkFilter(e.target.value)}
             onKeyDown={(e) => {
@@ -1722,7 +1722,7 @@ export default function CanvasView() {
             }}
           />
           <div className="canvas-notepicker-list">
-            {filteredLinks.length === 0 && <div className="canvas-notepicker-empty">No files</div>}
+            {filteredLinks.length === 0 && <div className="canvas-notepicker-empty">Nenhum arquivo</div>}
             {filteredLinks.map((f) => (
               <button
                 key={f.path}
@@ -1750,7 +1750,7 @@ export default function CanvasView() {
         {showGrip && (
           <div
             className="canvas-node-grip"
-            title="Drag to move"
+            title="Arraste para mover"
             onPointerDown={(e) => beginNodeDrag(e, n.id)}
             onDoubleClick={(e) => e.stopPropagation()}
           >

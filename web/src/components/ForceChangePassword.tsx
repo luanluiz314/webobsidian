@@ -22,15 +22,15 @@ export default function ForceChangePassword() {
     e.preventDefault();
     setErr('');
     if (next.length < MIN_LEN) {
-      setErr(`Password must be at least ${MIN_LEN} characters`);
+      setErr(`A senha deve ter pelo menos ${MIN_LEN} caracteres`);
       return;
     }
     if (next === DEFAULT_PASSWORD) {
-      setErr('Choose a password different from the default');
+      setErr('Escolha uma senha diferente da padrão');
       return;
     }
     if (next !== confirm) {
-      setErr('Passwords do not match');
+      setErr('As senhas não coincidem');
       return;
     }
     setBusy(true);
@@ -39,7 +39,7 @@ export default function ForceChangePassword() {
       await api.changePassword(DEFAULT_PASSWORD, next);
       setMustChangePassword(false);
     } catch (e: any) {
-      setErr(e.message ?? 'Failed to change password');
+      setErr(e.message ?? 'Falha ao alterar a senha');
     } finally {
       setBusy(false);
     }
@@ -51,7 +51,7 @@ export default function ForceChangePassword() {
         <div className="logo">
           <Icon name="gem" size={40} />
         </div>
-        <h1>Set a new password</h1>
+        <h1>Definir nova senha</h1>
         <p>
           You are signed in with the default password (<code>123456</code>). Choose a
           new password to secure your vault before continuing.
@@ -60,7 +60,7 @@ export default function ForceChangePassword() {
         <input
           className="text-input"
           type="password"
-          placeholder="New password"
+          placeholder="Nova senha"
           autoFocus
           autoComplete="new-password"
           value={next}
@@ -69,13 +69,13 @@ export default function ForceChangePassword() {
         <input
           className="text-input"
           type="password"
-          placeholder="Confirm new password"
+          placeholder="Confirme a nova senha"
           autoComplete="new-password"
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
         />
         <button className="btn" type="submit" disabled={busy}>
-          {busy ? 'Saving…' : 'Set password & continue'}
+          {busy ? 'Salvando…' : 'Set password & continue'}
         </button>
       </form>
     </div>

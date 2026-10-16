@@ -7,10 +7,10 @@ import BookmarksPanel from './BookmarksPanel';
 import Icon from './Icon';
 
 const TITLES: Record<string, string> = {
-  files: 'Files',
-  search: 'Search',
-  tags: 'Tags',
-  bookmarks: 'Bookmarks',
+  files: 'Arquivos',
+  search: 'Pesquisar',
+  tags: 'Etiquetas',
+  bookmarks: 'Favoritos',
 };
 
 export default function Sidebar() {
@@ -28,7 +28,7 @@ export default function Sidebar() {
   const autoReveal = useStore((s) => s.autoReveal);
   const toggleAutoReveal = useStore((s) => s.toggleAutoReveal);
   const openContextMenu = useStore((s) => s.openContextMenu);
-  const vaultName = tree?.name || 'Vault';
+  const vaultName = tree?.name || 'Cofre';
 
   const allCollapsed = expanded.length === 0;
   const toggleCollapseAll = () => setExpanded(allCollapsed ? collectFolderPaths(tree) : []);
@@ -49,14 +49,14 @@ export default function Sidebar() {
     const handle = e.currentTarget as HTMLElement;
     const startX = e.clientX;
     const startW = handle.parentElement?.getBoundingClientRect().width ?? 252;
-    handle.classList.add('active');
+    handle.classList.add('ativo');
     document.body.classList.add('wo-col-resizing');
     const move = (ev: PointerEvent) => {
       const w = Math.min(560, Math.max(180, Math.round(startW + (ev.clientX - startX))));
       document.documentElement.style.setProperty('--sidebar-width', `${w}px`);
     };
     const up = () => {
-      handle.classList.remove('active');
+      handle.classList.remove('ativo');
       document.body.classList.remove('wo-col-resizing');
       const w = parseInt(document.documentElement.style.getPropertyValue('--sidebar-width'), 10);
       if (w) try { localStorage.setItem('wo-sidebar-width', String(w)); } catch { /* ignore */ }
@@ -91,20 +91,20 @@ export default function Sidebar() {
         <span className="nav-title">{TITLES[leftPanel]}</span>
         {leftPanel === 'files' && (
           <>
-            <button className="nav-action" title="New note" onClick={() => newNote()}>
+            <button className="nav-action" title="Nova nota" onClick={() => newNote()}>
               <Icon name="square-pen" size={16} />
             </button>
-            <button className="nav-action" title="New canvas" onClick={() => newCanvas()}>
+            <button className="nav-action" title="Novo canvas" onClick={() => newCanvas()}>
               <Icon name="layout-dashboard" size={16} />
             </button>
-            <button className="nav-action" title="New folder" onClick={() => newFolder()}>
+            <button className="nav-action" title="Nova pasta" onClick={() => newFolder()}>
               <Icon name="folder-plus" size={16} />
             </button>
             <button className="nav-action" title="Change sort order" onClick={openSortMenu}>
               <Icon name="arrow-up-narrow-wide" size={16} />
             </button>
             <button
-              className={`nav-action ${autoReveal ? 'active' : ''}`}
+              className={`nav-action ${autoReveal ? 'ativo' : ''}`}
               title="Auto reveal current file"
               onClick={() => toggleAutoReveal()}
             >
@@ -117,7 +117,7 @@ export default function Sidebar() {
             >
               <Icon name={allCollapsed ? 'chevrons-up-down' : 'chevrons-down-up'} size={16} />
             </button>
-            <button className="nav-action" title="Trash" onClick={() => setTrash(true)}>
+            <button className="nav-action" title="Lixeira" onClick={() => setTrash(true)}>
               <Icon name="trash" size={16} />
             </button>
           </>
@@ -134,11 +134,11 @@ export default function Sidebar() {
           <Icon name="gem" size={15} /> {vaultName}
         </span>
         <span className="grow" />
-        <button title="Settings" onClick={() => setSettings(true)}>
+        <button title="Configurações" onClick={() => setSettings(true)}>
           <Icon name="settings" size={16} />
         </button>
       </div>
-      <div className="sidebar-resizer" title="Drag to resize" onPointerDown={onResizeDown} />
+      <div className="sidebar-resizer" title="Arraste para redimensionar" onPointerDown={onResizeDown} />
     </div>
   );
 }

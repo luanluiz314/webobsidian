@@ -23,7 +23,7 @@ export default function Settings() {
         <div className="settings-layout">
           <div className="settings-nav">
             {(['vault', 'git', 'api', 'sharing', 'plugins', 'appearance', 'account', 'about'] as Section[]).map((s) => (
-              <button key={s} className={section === s ? 'active' : ''} onClick={() => setSection(s)}>
+              <button key={s} className={section === s ? 'ativo' : ''} onClick={() => setSection(s)}>
                 {labels[s]}
               </button>
             ))}
@@ -45,14 +45,14 @@ export default function Settings() {
 }
 
 const labels: Record<Section, string> = {
-  vault: 'Vault & Files',
-  git: 'GitHub Sync',
-  api: 'API Keys',
-  sharing: 'Sharing',
-  plugins: 'Community Plugins',
-  appearance: 'Appearance',
-  account: 'Account',
-  about: 'About',
+  vault: 'Cofre e arquivos',
+  git: 'Sincronização GitHub',
+  api: 'Chaves de API',
+  sharing: 'Compartilhamento',
+  plugins: 'Plugins da comunidade',
+  appearance: 'Aparência',
+  account: 'Conta',
+  about: 'Sobre',
 };
 
 function Row({ name, desc, children }: { name: string; desc?: string; children: React.ReactNode }) {
@@ -74,7 +74,7 @@ function VaultSettings({ s, reload }: { s: any; reload: () => void }) {
   const save = async () => {
     await api.putSettings({ vault: { path } });
     await reload();
-    alert('Vault path saved. Reindex from the command palette if needed.');
+    alert('Caminho do cofre salvo. Se necessário, reindexe pela paleta de comandos.');
   };
   const saveDeleteMode = async (mode: string) => {
     setDeleteMode(mode);
@@ -84,13 +84,13 @@ function VaultSettings({ s, reload }: { s: any; reload: () => void }) {
   const browse = async (dir?: string) => setBrowser(await api.browse(dir).catch((e) => ({ error: e.message })));
   return (
     <div>
-      <h2>Vault & Files</h2>
-      <Row name="Vault path" desc="Absolute path on the server to your notes folder">
+      <h2>Cofre e arquivos</h2>
+      <Row name="Caminho do cofre" desc="Caminho absoluto da pasta de notas no servidor">
         <input className="text-input" style={{ width: 260 }} value={path} onChange={(e) => setPath(e.target.value)} />
       </Row>
       <div style={{ display: 'flex', gap: 8, margin: '8px 0' }}>
-        <button className="btn secondary" onClick={() => browse()}>Browse…</button>
-        <button className="btn" onClick={save}>Save vault path</button>
+        <button className="btn secondary" onClick={() => browse()}>Procurar…</button>
+        <button className="btn" onClick={save}>Salvar caminho do cofre</button>
       </div>
       {browser && !browser.error && (
         <div style={{ border: '1px solid var(--bg-modifier-border)', borderRadius: 6, padding: 8, marginTop: 8 }}>
@@ -102,7 +102,7 @@ function VaultSettings({ s, reload }: { s: any; reload: () => void }) {
             <div className="result" key={f.path} onClick={() => browse(f.path)} onDoubleClick={() => setPath(f.path)} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <Icon name="folder" size={15} /> {f.name}
               <button className="btn secondary" style={{ float: 'right', padding: '2px 8px' }} onClick={(e) => { e.stopPropagation(); setPath(f.path); }}>
-                Select
+                Selecionar
               </button>
             </div>
           ))}
@@ -110,8 +110,8 @@ function VaultSettings({ s, reload }: { s: any; reload: () => void }) {
       )}
       {browser?.error && <div style={{ color: '#e5534b' }}>{browser.error}</div>}
       <Row
-        name="When deleting a file"
-        desc="Move to .trash keeps a recoverable copy (Open trash to restore). Permanently delete removes it immediately."
+        name="Ao excluir um arquivo"
+        desc="Mover para .trash preserva uma cópia recuperável. A exclusão permanente remove o arquivo imediatamente."
       >
         <select
           className="text-input"
@@ -119,8 +119,8 @@ function VaultSettings({ s, reload }: { s: any; reload: () => void }) {
           value={deleteMode}
           onChange={(e) => saveDeleteMode(e.target.value)}
         >
-          <option value="trash">Move to .trash (recoverable)</option>
-          <option value="permanent">Permanently delete</option>
+          <option value="trash">Mover para .trash (recuperável)</option>
+          <option value="permanent">Excluir permanentemente</option>
         </select>
       </Row>
     </div>
@@ -153,47 +153,47 @@ function GitSettings({ s, reload }: { s: any; reload: () => void }) {
         ? [`${label} ${r.ok ? 'ok' : 'NOT ok'}`, ...r.log]
         : [String(r?.message ?? JSON.stringify(r))];
       append(lines.flatMap((l) => String(l).split('\n')));
-    } catch (e: any) { append([`Error: ${e.message}`]); }
+    } catch (e: any) { append([`Erro: ${e.message}`]); }
   };
   return (
     <div>
-      <h2>GitHub Sync</h2>
-      <Row name="Enable git sync"><input type="checkbox" checked={g.enabled} onChange={(e) => set('enabled', e.target.checked)} /></Row>
-      <Row name="Remote URL" desc="https://github.com/owner/repo.git">
+      <h2>Sincronização GitHub</h2>
+      <Row name="Ativar sincronização Git"><input type="checkbox" checked={g.enabled} onChange={(e) => set('ativado', e.target.checked)} /></Row>
+      <Row name="URL remota" desc="https://github.com/owner/repo.git">
         <input className="text-input" style={{ width: 260 }} value={g.remote} onChange={(e) => set('remote', e.target.value)} />
       </Row>
       <Row name="Branch"><input className="text-input" style={{ width: 120 }} value={g.branch} onChange={(e) => set('branch', e.target.value)} /></Row>
-      <Row name="Access token (PAT)" desc="Stored server-side; leave masked to keep current">
+      <Row name="Token de acesso (PAT)" desc="Armazenado no servidor; deixe mascarado para manter o atual">
         <input className="text-input" type="password" style={{ width: 260 }} value={g.token} onChange={(e) => set('token', e.target.value)} />
       </Row>
-      <Row name="Author name"><input className="text-input" value={g.authorName} onChange={(e) => set('authorName', e.target.value)} /></Row>
-      <Row name="Author email"><input className="text-input" value={g.authorEmail} onChange={(e) => set('authorEmail', e.target.value)} /></Row>
-      <Row name="Auto-sync" desc="Periodic pull+commit+push on the interval below"><input type="checkbox" checked={g.autoSync} onChange={(e) => set('autoSync', e.target.checked)} /></Row>
-      <Row name="Auto-commit on save" desc="Commit (+push) ~5s after each edit"><input type="checkbox" checked={g.autoCommitOnSave} onChange={(e) => set('autoCommitOnSave', e.target.checked)} /></Row>
-      <Row name="Interval (sec)"><input className="text-input" type="number" style={{ width: 90 }} value={g.intervalSec} onChange={(e) => set('intervalSec', Number(e.target.value))} /></Row>
-      <Row name="Git LFS patterns" desc="Space-separated globs tracked via LFS">
+      <Row name="Nome do autor"><input className="text-input" value={g.authorName} onChange={(e) => set('authorName', e.target.value)} /></Row>
+      <Row name="E-mail do autor"><input className="text-input" value={g.authorEmail} onChange={(e) => set('authorEmail', e.target.value)} /></Row>
+      <Row name="Sincronização automática" desc="Baixar, registrar e enviar alterações periodicamente no intervalo abaixo"><input type="checkbox" checked={g.autoSync} onChange={(e) => set('autoSync', e.target.checked)} /></Row>
+      <Row name="Registrar alterações ao salvar" desc="Registra e envia alterações cerca de 5 s após cada edição"><input type="checkbox" checked={g.autoCommitOnSave} onChange={(e) => set('autoCommitOnSave', e.target.checked)} /></Row>
+      <Row name="Intervalo (s)"><input className="text-input" type="number" style={{ width: 90 }} value={g.intervalSec} onChange={(e) => set('intervalSec', Number(e.target.value))} /></Row>
+      <Row name="Padrões Git LFS" desc="Padrões separados por espaço, rastreados pelo LFS">
         <input className="text-input" style={{ width: 260 }} value={(g.lfsPatterns || []).join(' ')} onChange={(e) => set('lfsPatterns', e.target.value.split(/\s+/).filter(Boolean))} />
       </Row>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
-        <button className="btn" onClick={save}>Save</button>
-        <button className="btn secondary" onClick={() => run(api.gitInit, 'Init')}>Init repo</button>
-        <button className="btn secondary" onClick={() => run(api.gitClone, 'Clone')}>Clone</button>
-        <button className="btn secondary" onClick={() => run(api.gitPull, 'Pull')}>Pull</button>
-        <button className="btn secondary" onClick={() => run(() => api.gitCommit(), 'Commit')}>Commit</button>
-        <button className="btn secondary" onClick={() => run(api.gitPush, 'Push')}>Push</button>
-        <button className="btn" onClick={() => run(() => api.gitSync(), 'Sync')}>Sync now</button>
+        <button className="btn" onClick={save}>Salvar</button>
+        <button className="btn secondary" onClick={() => run(api.gitInit, 'Init')}>Inicializar repositório</button>
+        <button className="btn secondary" onClick={() => run(api.gitClone, 'Clonar')}>Clonar</button>
+        <button className="btn secondary" onClick={() => run(api.gitPull, 'Baixar alterações')}>Baixar alterações</button>
+        <button className="btn secondary" onClick={() => run(() => api.gitCommit(), 'Registrar alterações')}>Registrar alterações</button>
+        <button className="btn secondary" onClick={() => run(api.gitPush, 'Enviar alterações')}>Enviar alterações</button>
+        <button className="btn" onClick={() => run(() => api.gitSync(), 'Sync')}>Sincronizar agora</button>
       </div>
       <div style={{ marginTop: 12 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-          <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Sync log</span>
+          <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Registro de sincronização</span>
           {log.length > 0 && (
-            <button className="btn secondary" style={{ padding: '2px 8px' }} onClick={() => setLog([])}>Clear</button>
+            <button className="btn secondary" style={{ padding: '2px 8px' }} onClick={() => setLog([])}>Limpar</button>
           )}
         </div>
         <textarea
           ref={logRef}
           readOnly
-          value={log.length ? log.join('\n') : 'No git activity yet. Click an action above (Sync now, Pull, Push…) to see logs here.'}
+          value={log.length ? log.join('\n') : 'Nenhuma atividade Git ainda. Clique em uma ação acima para exibir os registros.'}
           style={{
             width: '100%', height: 200, boxSizing: 'border-box', resize: 'vertical',
             background: 'var(--bg-primary)', color: 'var(--text-normal)',
@@ -221,10 +221,10 @@ function ApiKeys() {
   };
   return (
     <div>
-      <h2>API Keys</h2>
-      <p style={{ color: 'var(--text-muted)' }}>Keys let AI agents call <code>/api/v1</code>. The raw key is shown once.</p>
-      <Row name="Name"><input className="text-input" value={name} onChange={(e) => setName(e.target.value)} /></Row>
-      <Row name="Scopes">
+      <h2>Chaves de API</h2>
+      <p style={{ color: 'var(--text-muted)' }}>As chaves permitem que agentes de IA acessem <code>/api/v1</code>. The raw key is shown once.</p>
+      <Row name="Nome"><input className="text-input" value={name} onChange={(e) => setName(e.target.value)} /></Row>
+      <Row name="Permissões">
         <span>
           {['read', 'write', 'search'].map((sc) => (
             <label key={sc} style={{ marginRight: 10 }}>
@@ -233,7 +233,7 @@ function ApiKeys() {
           ))}
         </span>
       </Row>
-      <button className="btn" onClick={create}>Create key</button>
+      <button className="btn" onClick={create}>Criar chave</button>
       {created && (
         <pre style={{ background: 'var(--bg-primary)', padding: 10, borderRadius: 6, marginTop: 10, wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
           {created}
@@ -245,9 +245,9 @@ function ApiKeys() {
           <div className="setting-row" key={k.id}>
             <div className="info">
               <div className="name">{k.name} <span style={{ color: 'var(--text-faint)' }}>{k.prefix}…</span></div>
-              <div className="desc">scopes: {k.scopes.join(', ')} · used: {k.lastUsed ?? 'never'}</div>
+              <div className="desc">permissões: {k.scopes.join(', ')} · used: {k.lastUsed ?? 'nunca'}</div>
             </div>
-            <button className="btn danger" onClick={async () => { await api.revokeKey(k.id); load(); }}>Revoke</button>
+            <button className="btn danger" onClick={async () => { await api.revokeKey(k.id); load(); }}>Revogar</button>
           </div>
         ))}
       </div>
@@ -268,7 +268,7 @@ function Shares() {
   const url = (id: string) => `${location.origin}/share/${id}`;
   const copy = (id: string) => {
     navigator.clipboard?.writeText(url(id)).catch(() => {});
-    notify('Public link copied');
+    notify('Link público copiado');
   };
   const toggle = async (s: any) => {
     await api.setShareEnabled(s.id, !s.enabled);
@@ -287,7 +287,7 @@ function Shares() {
     );
     if (pw === null) return;
     await api.setSharePassword(s.id, pw || null);
-    notify(pw ? 'Password set' : 'Password removed');
+    notify(pw ? 'Senha definida' : 'Senha removida');
     load();
   };
 
@@ -296,22 +296,22 @@ function Shares() {
 
   return (
     <div>
-      <h2>Sharing</h2>
+      <h2>Compartilhamento</h2>
       <p style={{ color: 'var(--text-muted)' }}>
-        Notes shared via a public link are readable by <b>anyone with the URL</b>, without login.
+        Notas compartilhadas por link público podem ser lidas por <b>qualquer pessoa com a URL</b>, without login.
         Create a link from a note's context menu ("Share…"). Disable keeps the URL for
         re-enabling later; delete revokes it permanently.
       </p>
       <input
         className="text-input"
         style={{ width: '100%', margin: '6px 0 12px' }}
-        placeholder="Search shared notes…"
+        placeholder="Pesquisar notas compartilhadas…"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
       {filtered.length === 0 && (
         <div style={{ color: 'var(--text-faint)' }}>
-          {shares.length === 0 ? 'No notes are shared publicly.' : 'No shared note matches the search.'}
+          {shares.length === 0 ? 'Nenhuma nota compartilhada publicamente.' : 'Nenhuma nota compartilhada corresponde à pesquisa.'}
         </div>
       )}
       {filtered.map((s) => (
@@ -326,21 +326,21 @@ function Shares() {
               {s.path}
             </div>
             <div className="desc">
-              {s.enabled ? 'active' : 'disabled'}
-              {s.hasPassword ? ' · password-protected' : ''} · created {new Date(s.createdAt).toLocaleDateString()}
+              {s.enabled ? 'ativo' : 'desativado'}
+              {s.hasPassword ? ' · password-protected' : ''} · created {new Date(s.createdAt).toLocaleDateString('pt-BR')}
             </div>
           </div>
           <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexShrink: 0 }}>
             <button className="btn secondary" disabled={!s.enabled} onClick={() => copy(s.id)} title={url(s.id)}>
-              <Icon name="link" size={14} /> Copy link
+              <Icon name="link" size={14} /> Copiar link
             </button>
-            <button className="btn secondary" onClick={() => setPassword(s)} title={s.hasPassword ? 'Change or remove password' : 'Require a password to open the link'}>
-              {s.hasPassword ? 'Password ✓' : 'Password…'}
+            <button className="btn secondary" onClick={() => setPassword(s)} title={s.hasPassword ? 'Alterar ou remover senha' : 'Exigir senha para abrir o link'}>
+              {s.hasPassword ? 'Password ✓' : 'Senha…'}
             </button>
             <button className={`btn ${s.enabled ? 'secondary' : ''}`} onClick={() => toggle(s)}>
-              {s.enabled ? 'Disable' : 'Enable'}
+              {s.enabled ? 'Desativar' : 'Ativar'}
             </button>
-            <button className="btn danger" onClick={() => remove(s)}>Delete</button>
+            <button className="btn danger" onClick={() => remove(s)}>Excluir</button>
           </div>
         </div>
       ))}
@@ -355,22 +355,22 @@ function Plugins() {
   const load = () => api.listPlugins().then((r) => setPlugins(r.plugins)).catch(() => {});
   useEffect(() => { load(); }, []);
   const install = async () => {
-    setMsg('Installing…');
-    try { await api.installPlugin(repo); setMsg('Installed ✓'); setRepo(''); await load(); }
-    catch (e: any) { setMsg(`Error: ${e.message}`); }
+    setMsg('Instalando…');
+    try { await api.installPlugin(repo); setMsg('Instalado ✓'); setRepo(''); await load(); }
+    catch (e: any) { setMsg(`Erro: ${e.message}`); }
   };
   return (
     <div>
-      <h2>Community Plugins</h2>
-      <Row name="Install from GitHub" desc="owner/repo — pulls manifest.json + main.js from latest release">
+      <h2>Plugins da comunidade</h2>
+      <Row name="Instalar pelo GitHub" desc="owner/repo — pulls manifest.json + main.js from latest release">
         <span style={{ display: 'flex', gap: 8 }}>
           <input className="text-input" placeholder="blacksmithgu/obsidian-dataview" value={repo} onChange={(e) => setRepo(e.target.value)} />
-          <button className="btn" onClick={install}>Install</button>
+          <button className="btn" onClick={install}>Instalar</button>
         </span>
       </Row>
       {msg && <div style={{ color: 'var(--text-muted)', margin: '6px 0' }}>{msg}</div>}
       <div style={{ marginTop: 12 }}>
-        {plugins.length === 0 && <div style={{ color: 'var(--text-faint)' }}>No plugins installed in .obsidian/plugins</div>}
+        {plugins.length === 0 && <div style={{ color: 'var(--text-faint)' }}>Nenhum plugin instalado em .obsidian/plugins</div>}
         {plugins.map((p) => (
           <div className="setting-row" key={p.id}>
             <div className="info">
@@ -378,7 +378,7 @@ function Plugins() {
               <div className="desc">{p.description}</div>
             </div>
             <label>
-              <input type="checkbox" checked={p.enabled} onChange={async (e) => { await api.setPluginEnabled(p.id, e.target.checked); load(); }} /> enabled
+              <input type="checkbox" checked={p.enabled} onChange={async (e) => { await api.setPluginEnabled(p.id, e.target.checked); load(); }} /> ativado
             </label>
           </div>
         ))}
@@ -395,11 +395,11 @@ function Appearance({ s }: { s: any }) {
   const save = async (t: string) => { setTheme(t); await api.putSettings({ ui: { theme: t } }); location.reload(); };
   return (
     <div>
-      <h2>Appearance</h2>
-      <Row name="Theme">
+      <h2>Aparência</h2>
+      <Row name="Tema">
         <select className="text-input" value={theme} onChange={(e) => save(e.target.value)}>
-          <option value="obsidian-dark">Obsidian Dark</option>
-          <option value="obsidian-light">Obsidian Light</option>
+          <option value="obsidian-dark">Obsidian Escuro</option>
+          <option value="obsidian-light">Obsidian Claro</option>
         </select>
       </Row>
     </div>
@@ -419,23 +419,23 @@ function AccountSettings({ s, reload }: { s: any; reload: () => void }) {
     setErr('');
     setMsg('');
     if (next.length < 6) {
-      setErr('Mật khẩu mới phải có ít nhất 6 ký tự');
+      setErr('A nova senha deve ter pelo menos 6 caracteres');
       return;
     }
     if (next !== confirm) {
-      setErr('Mật khẩu xác nhận không khớp');
+      setErr('A confirmação da senha não coincide');
       return;
     }
     setBusy(true);
     try {
       await api.changePassword(current, next);
-      setMsg('Đã đổi mật khẩu ✓');
+      setMsg('Senha alterada ✓');
       setCurrent('');
       setNext('');
       setConfirm('');
       await reload();
     } catch (e: any) {
-      setErr(e?.message ?? 'Đổi mật khẩu thất bại');
+      setErr(e?.message ?? 'Falha ao alterar a senha');
     } finally {
       setBusy(false);
     }
@@ -443,35 +443,35 @@ function AccountSettings({ s, reload }: { s: any; reload: () => void }) {
 
   return (
     <div>
-      <h2>Account</h2>
+      <h2>Conta</h2>
       <p style={{ color: 'var(--text-muted)' }}>
-        Mật khẩu đăng nhập vào WebObsidian.
+        Senha de acesso ao WebObsidian.
         {usingDefault && (
           <>
-            {' '}Bạn đang dùng <b>mật khẩu mặc định <code>123456</code></b> — hãy đổi mật khẩu để
+            {' '}Bạn đang dùng <b>senha padrão <code>123456</code></b> — hãy đổi mật khẩu để
             bảo mật vault.
           </>
         )}
       </p>
-      <Row name="Mật khẩu hiện tại" desc={usingDefault ? 'Mặc định là 123456' : undefined}>
+      <Row name="Senha atual" desc={usingDefault ? 'Padrão: 123456' : undefined}>
         <input className="text-input" type="password" style={{ width: 240 }} value={current}
           onChange={(e) => setCurrent(e.target.value)} autoComplete="current-password" />
       </Row>
-      <Row name="Mật khẩu mới" desc="Tối thiểu 6 ký tự">
+      <Row name="Nova senha" desc="Mínimo de 6 caracteres">
         <input className="text-input" type="password" style={{ width: 240 }} value={next}
           onChange={(e) => setNext(e.target.value)} autoComplete="new-password" />
       </Row>
-      <Row name="Xác nhận mật khẩu mới">
+      <Row name="Confirmar nova senha">
         <input className="text-input" type="password" style={{ width: 240 }} value={confirm}
           onChange={(e) => setConfirm(e.target.value)} autoComplete="new-password" />
       </Row>
       {err && <div style={{ color: '#e5534b', margin: '6px 0' }}>{err}</div>}
       {msg && <div style={{ color: 'var(--text-accent, #4caf50)', margin: '6px 0' }}>{msg}</div>}
       <button className="btn" onClick={save} disabled={busy || !current || !next}>
-        {busy ? 'Đang lưu…' : 'Đổi mật khẩu'}
+        {busy ? 'Salvando…' : 'Alterar senha'}
       </button>
       <p style={{ color: 'var(--text-faint)', fontSize: 12, marginTop: 16 }}>
-        Quên mật khẩu? Đặt <code>auth.passwordHash</code> trong <code>data/settings.json</code> hoặc
+        Esqueceu a senha? Defina <code>auth.passwordHash</code> trong <code>data/settings.json</code> hoặc
         biến môi trường <code>WEBOBSIDIAN_PASSWORD</code> làm mật khẩu khôi phục (override) rồi đăng
         nhập lại để đổi mật khẩu mới.
       </p>
@@ -483,12 +483,12 @@ function About() {
   const logout = async () => { await api.logout(); location.reload(); };
   return (
     <div>
-      <h2>About WebObsidian</h2>
+      <h2>Sobre o WebObsidian</h2>
       <p style={{ color: 'var(--text-muted)' }}>
         A self-hosted, Obsidian-compatible web app. Vault, QMD search, GitHub sync (with LFS),
         agent API and community plugins.
       </p>
-      <button className="btn danger" onClick={logout}>Log out</button>
+      <button className="btn danger" onClick={logout}>Sair</button>
     </div>
   );
 }

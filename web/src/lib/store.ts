@@ -418,7 +418,7 @@ export const useStore = create<AppState>()(
         set((s) => ({
           tabs: s.tabs.some((t) => t.path === GRAPH_PATH)
             ? s.tabs
-            : [...s.tabs, { path: GRAPH_PATH, title: 'Graph view' }],
+            : [...s.tabs, { path: GRAPH_PATH, title: 'Visualização em grafo' }],
           activePath: GRAPH_PATH,
           content: '',
           dirty: false,

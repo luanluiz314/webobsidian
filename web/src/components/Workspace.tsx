@@ -107,7 +107,7 @@ export default function Workspace() {
     window.setTimeout(() => {
       const v = getActiveEditor();
       if (v) triggerAddProperty(v);
-      else notify('Open the note to add a property');
+      else notify('Abra a nota para adicionar uma propriedade');
     }, 80);
   };
 
@@ -123,7 +123,7 @@ export default function Workspace() {
     }, 200);
   };
 
-  // Per-pane "More options" (⋯) menu, like Obsidian's pane menu.
+  // Per-pane "Mais opções" (⋯) menu, like Obsidian's pane menu.
   const openMoreMenu = (e: React.MouseEvent) => {
     if (!activePath) return;
     e.stopPropagation();
@@ -147,7 +147,7 @@ export default function Workspace() {
     } else {
       const sep: ContextMenuItem = { label: '', separator: true };
       const renameItem: ContextMenuItem = {
-        label: 'Rename…',
+        label: 'Renomear…',
         icon: 'pencil',
         onClick: async () => {
           const to = prompt('Rename / move to (vault-relative path):', path);
@@ -160,12 +160,12 @@ export default function Workspace() {
         },
       };
       const moveItem: ContextMenuItem = {
-        label: 'Move file to…',
+        label: 'Mover arquivo para…',
         icon: 'folder',
         onClick: () => setMovePath(path),
       };
       const copyItem: ContextMenuItem = {
-        label: 'Make a copy',
+        label: 'Criar uma cópia',
         icon: 'file-plus',
         onClick: async () => {
           const r = await api.read(path).catch(() => null);
@@ -175,7 +175,7 @@ export default function Workspace() {
           const copyPath = dot > 0 ? `${path.slice(0, dot)} copy${path.slice(dot)}` : `${path} copy`;
           await api.write(copyPath, body);
           await loadTree();
-          notify('Made a copy');
+          notify('Cópia criada');
         },
       };
       items = [
@@ -191,7 +191,7 @@ export default function Workspace() {
         renameItem,
         moveItem,
         copyItem,
-        { label: bookmarks.includes(path) ? 'Remove bookmark' : 'Bookmark', icon: 'bookmark', onClick: () => toggleBookmark(path) },
+        { label: bookmarks.includes(path) ? 'Remover dos favoritos' : 'Adicionar aos favoritos', icon: 'bookmark', onClick: () => toggleBookmark(path) },
         ...(isMd ? [{ label: 'Add file property', icon: 'plus', onClick: addFileProperty }] : []),
         ...(isMd ? [{ label: 'Export to PDF…', icon: 'file-pdf', onClick: exportToPdf }] : []),
         ...(canSplit
@@ -201,17 +201,17 @@ export default function Workspace() {
                 label: 'Find…',
                 icon: 'search',
                 onClick: () => {
-                  if (!editorFind()) notify('Open the note to search inside it');
+                  if (!editorFind()) notify('Abra a nota para pesquisar nela');
                 },
               },
             ]
           : []),
         sep,
         {
-          label: 'Copy URL path',
+          label: 'Copiar caminho da URL',
           onClick: () => {
             navigator.clipboard?.writeText(`${location.origin}${pathToUrl(path)}`).catch(() => {});
-            notify('URL copied');
+            notify('URL copiada');
           },
         },
         { label: 'Open version history', icon: 'clock', onClick: () => setVersionHistory(path) },
@@ -221,16 +221,16 @@ export default function Workspace() {
                 label: 'Open linked view',
                 icon: 'arrow-up-right',
                 submenu: [
-                  { label: 'Backlinks', icon: 'link', onClick: () => setRightPanel('backlinks') },
+                  { label: 'Links de retorno', icon: 'link', onClick: () => setRightPanel('backlinks') },
                   { label: 'Outgoing links', icon: 'arrow-up-right', onClick: () => setRightPanel('outgoing') },
-                  { label: 'Outline', icon: 'list', onClick: () => setRightPanel('outline') },
+                  { label: 'Estrutura', icon: 'list', onClick: () => setRightPanel('outline') },
                 ],
               },
             ]
           : []),
         sep,
         {
-          label: 'Reveal file in navigation',
+          label: 'Localizar arquivo na navegação',
           icon: 'folder',
           onClick: () => {
             revealInTree(path);
@@ -242,15 +242,15 @@ export default function Workspace() {
         ...tabItems,
         sep,
         {
-          label: 'Delete',
+          label: 'Excluir',
           danger: true,
           icon: 'trash',
           onClick: async () => {
-            if (confirm(`Delete "${baseName}"?`)) {
+            if (confirm(`Excluir "${baseName}"?`)) {
               const r = await api.remove(path);
               closeTab(path);
               await loadTree();
-              notify(r.deleted ? 'Deleted permanently' : 'Moved to trash');
+              notify(r.deleted ? 'Excluído permanentemente' : 'Movido para a lixeira');
             }
           },
         },
@@ -266,7 +266,7 @@ export default function Workspace() {
       try {
         const { path } = await api.upload(file);
         setContent(`${content}\n![[${path}]]\n`);
-        notify(`Inserted ${path}`);
+        notify(`Inserido: ${path}`);
       } catch (e: any) {
         notify(e.message);
       }
@@ -300,7 +300,7 @@ export default function Workspace() {
           {tabs.map((t) => (
             <div
               key={t.path}
-              className={`tab ${activePath === t.path ? 'active' : ''}`}
+              className={`tab ${activePath === t.path ? 'ativo' : ''}`}
               onClick={() => openFile(t.path)}
               onAuxClick={(e) => e.button === 1 && closeTab(t.path)}
               title={t.path}
@@ -327,7 +327,7 @@ export default function Workspace() {
         </div>
         <span
           className="tab-new tab-ctl"
-          title="New note (⌘N)"
+          title="Nova nota (⌘N)"
           onClick={() => newNote()}
         >
           <Icon name="plus" size={16} />
@@ -335,7 +335,7 @@ export default function Workspace() {
         <span className="grow" style={{ flex: 1 }} />
         <span
           className="tab-new tab-ctl"
-          title="Toggle right sidebar"
+          title="Alternar barra lateral direita"
           onClick={() => (isMobile ? setMobileDrawer('right') : toggleRight())}
         >
           <Icon name="panel-right" size={isMobile ? 20 : 16} />
@@ -344,16 +344,16 @@ export default function Workspace() {
 
       {activePath && (
         <div className="view-header">
-          <button className="tool-btn" title="Back" disabled={!canGoBack} onClick={goBack}>
+          <button className="tool-btn" title="Voltar" disabled={!canGoBack} onClick={goBack}>
             <Icon name="arrow-left" size={18} />
           </button>
-          <button className="tool-btn" title="Forward" disabled={!canGoForward} onClick={goForward}>
+          <button className="tool-btn" title="Avançar" disabled={!canGoForward} onClick={goForward}>
             <Icon name="arrow-right" size={18} />
           </button>
           <span className="grow" />
           <span className="crumbs">
             {activePath === GRAPH_PATH
-              ? 'Graph view'
+              ? 'Visualização em grafo'
               : activePath.split('/').map((seg, i) => (
                   <span key={i}>
                     {i > 0 && <span className="sep">/</span>}
@@ -364,29 +364,29 @@ export default function Workspace() {
           <span className="grow" />
           {isMd && (
             <>
-              <button className={`tool-btn ${bookmarks.includes(activePath) ? 'active' : ''}`} title="Bookmark" onClick={() => toggleBookmark(activePath)}>
+              <button className={`tool-btn ${bookmarks.includes(activePath) ? 'ativo' : ''}`} title="Adicionar aos favoritos" onClick={() => toggleBookmark(activePath)}>
                 <Icon name="bookmark" size={16} />
               </button>
               {!isMobile && (
-                <button className="tool-btn" title="Open to the right" onClick={() => openToSide(activePath)}>
+                <button className="tool-btn" title="Abrir à direita" onClick={() => openToSide(activePath)}>
                   <Icon name="columns" size={16} />
                 </button>
               )}
               <div className="seg">
-                <button className={viewMode === 'source' ? 'active' : ''} onClick={() => setViewMode('source')} title="Source">
-                  Source
+                <button className={viewMode === 'source' ? 'ativo' : ''} onClick={() => setViewMode('source')} title="Código-fonte">
+                  Código-fonte
                 </button>
-                <button className={viewMode === 'live' ? 'active' : ''} onClick={() => setViewMode('live')} title="Live preview">
-                  Live
+                <button className={viewMode === 'live' ? 'ativo' : ''} onClick={() => setViewMode('live')} title="Pré-visualização ao vivo">
+                  Ao vivo
                 </button>
-                <button className={viewMode === 'reading' ? 'active' : ''} onClick={() => setViewMode('reading')} title="Reading">
-                  Reading
+                <button className={viewMode === 'reading' ? 'ativo' : ''} onClick={() => setViewMode('reading')} title="Leitura">
+                  Leitura
                 </button>
               </div>
             </>
           )}
           {!activeIsFolder && (
-            <button className="tool-btn" title="More options" onClick={openMoreMenu}>
+            <button className="tool-btn" title="Mais opções" onClick={openMoreMenu}>
               <Icon name="more-horizontal" size={18} />
             </button>
           )}
@@ -404,7 +404,7 @@ export default function Workspace() {
               <div className="big">
                 <Icon name="file-text" size={48} />
               </div>
-              <p>No file is open — pick a note, or press ⌘O</p>
+              <p>Nenhum arquivo aberto — selecione uma nota ou pressione ⌘O</p>
             </div>
           </div>
         )}
@@ -428,7 +428,7 @@ export default function Workspace() {
             <div className="split-head">
               <span className="crumbs">{splitPath}</span>
               <span className="grow" />
-              <button className="tool-btn" onClick={closeSplit} title="Close split">
+              <button className="tool-btn" onClick={closeSplit} title="Fechar divisão">
                 <Icon name="x" size={16} />
               </button>
             </div>

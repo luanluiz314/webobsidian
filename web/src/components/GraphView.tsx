@@ -659,17 +659,17 @@ export default function GraphView() {
         if (!blob) throw new Error('toBlob failed');
         if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
           await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-          useStore.getState().notify('Graph screenshot copied');
+          useStore.getState().notify('Captura do grafo copiada');
         } else {
           const a = document.createElement('a');
           a.href = URL.createObjectURL(blob);
           a.download = 'graph.png';
           a.click();
           URL.revokeObjectURL(a.href);
-          useStore.getState().notify('Graph screenshot downloaded');
+          useStore.getState().notify('Captura do grafo baixada');
         }
       } catch {
-        useStore.getState().notify('Screenshot failed');
+        useStore.getState().notify('Falha ao capturar a tela');
       }
     };
     window.addEventListener('wo-graph-screenshot', onShot);
@@ -996,7 +996,7 @@ export default function GraphView() {
           <Icon name="search" size={14} />
           <input
             value={jumpQ}
-            placeholder="Find node…"
+            placeholder="Localizar nó…"
             spellCheck={false}
             onChange={(e) => setJumpQ(e.target.value)}
             onKeyDown={(e) => {
@@ -1010,7 +1010,7 @@ export default function GraphView() {
           />
           {jumpQ.trim() !== '' && (
             <div className="graph-node-results">
-              {jumpResults.length === 0 && <div className="graph-node-empty">No matching nodes</div>}
+              {jumpResults.length === 0 && <div className="graph-node-empty">Nenhum nó encontrado</div>}
               {jumpResults.map((n) => (
                 <button
                   key={n.id}
@@ -1036,13 +1036,13 @@ export default function GraphView() {
           <div className="graph-error">
             <span>{buildError}</span>
             <button className="btn secondary" onClick={reset}>
-              Reset filters
+              Redefinir filtros
             </button>
           </div>
         )}
 
         {!panelOpen && (
-          <button className="graph-panel-open" title="Show filters" onClick={() => setPanelOpen(true)}>
+          <button className="graph-panel-open" title="Mostrar filtros" onClick={() => setPanelOpen(true)}>
             <Icon name="settings" size={16} />
           </button>
         )}
@@ -1091,13 +1091,13 @@ function FilterPanel({
   return (
     <div className="graph-panel">
       <Section
-        title="Filters"
+        title="Filtros"
         actions={
           <>
-            <button className="nav-action" title="Reset to defaults" onClick={reset}>
+            <button className="nav-action" title="Restaurar padrões" onClick={reset}>
               <Icon name="refresh-cw" size={14} />
             </button>
-            <button className="nav-action" title="Close" onClick={onClose}>
+            <button className="nav-action" title="Fechar" onClick={onClose}>
               <Icon name="x" size={14} />
             </button>
           </>
@@ -1105,19 +1105,19 @@ function FilterPanel({
       >
         <input
           className="text-input"
-          placeholder="Search files..."
+          placeholder="Pesquisar arquivos..."
           value={s.search}
           onChange={(e) => patch({ search: e.target.value })}
         />
-        <Toggle label="Tags" checked={s.tags} onChange={(v) => patch({ tags: v })} />
-        <Toggle label="Attachments" checked={s.attachments} onChange={(v) => patch({ attachments: v })} />
-        <Toggle label="Existing files only" checked={s.existingOnly} onChange={(v) => patch({ existingOnly: v })} />
-        <Toggle label="Orphans" checked={s.orphans} onChange={(v) => patch({ orphans: v })} />
+        <Toggle label="Etiquetas" checked={s.tags} onChange={(v) => patch({ tags: v })} />
+        <Toggle label="Anexos" checked={s.attachments} onChange={(v) => patch({ attachments: v })} />
+        <Toggle label="Apenas arquivos existentes" checked={s.existingOnly} onChange={(v) => patch({ existingOnly: v })} />
+        <Toggle label="Órfãos" checked={s.orphans} onChange={(v) => patch({ orphans: v })} />
       </Section>
 
-      <Section title="Groups">
+      <Section title="Grupos">
         <button className="btn" style={{ width: '100%' }} onClick={addGroup}>
-          New group
+          Novo grupo
         </button>
         {s.groups.map((g, i) => (
           <div className="graph-group-row" key={i}>
@@ -1129,32 +1129,32 @@ function FilterPanel({
             />
             <input
               className="text-input"
-              placeholder="Search query"
+              placeholder="Consulta de pesquisa"
               value={g.query}
               onChange={(e) => setGroup(i, { query: e.target.value })}
             />
-            <button className="nav-action" title="Remove group" onClick={() => delGroup(i)}>
+            <button className="nav-action" title="Remover grupo" onClick={() => delGroup(i)}>
               <Icon name="x" size={14} />
             </button>
           </div>
         ))}
       </Section>
 
-      <Section title="Display">
-        <Toggle label="Arrows" checked={s.arrows} onChange={(v) => patch({ arrows: v })} />
-        <Slider label="Text fade threshold" min={-3} max={3} step={0.1} value={s.textFade} onChange={(v) => patch({ textFade: v })} />
-        <Slider label="Node size" min={0.1} max={5} step={0.1} value={s.nodeSize} onChange={(v) => patch({ nodeSize: v })} />
-        <Slider label="Link thickness" min={0.1} max={5} step={0.1} value={s.linkThickness} onChange={(v) => patch({ linkThickness: v })} />
+      <Section title="Exibição">
+        <Toggle label="Setas" checked={s.arrows} onChange={(v) => patch({ arrows: v })} />
+        <Slider label="Limite de esmaecimento do texto" min={-3} max={3} step={0.1} value={s.textFade} onChange={(v) => patch({ textFade: v })} />
+        <Slider label="Tamanho dos nós" min={0.1} max={5} step={0.1} value={s.nodeSize} onChange={(v) => patch({ nodeSize: v })} />
+        <Slider label="Espessura dos links" min={0.1} max={5} step={0.1} value={s.linkThickness} onChange={(v) => patch({ linkThickness: v })} />
         <button className="btn" style={{ width: '100%', marginTop: 6 }} onClick={onAnimate}>
-          Animate
+          Animar
         </button>
       </Section>
 
-      <Section title="Forces">
-        <Slider label="Center force" min={0} max={1} step={0.01} value={s.centerForce} onChange={(v) => patch({ centerForce: v })} />
-        <Slider label="Repel force" min={0} max={20} step={0.1} value={s.repelForce} onChange={(v) => patch({ repelForce: v })} />
-        <Slider label="Link force" min={0} max={1} step={0.01} value={s.linkForce} onChange={(v) => patch({ linkForce: v })} />
-        <Slider label="Link distance" min={30} max={500} step={1} value={s.linkDistance} onChange={(v) => patch({ linkDistance: v })} />
+      <Section title="Forças">
+        <Slider label="Força de centralização" min={0} max={1} step={0.01} value={s.centerForce} onChange={(v) => patch({ centerForce: v })} />
+        <Slider label="Força de repulsão" min={0} max={20} step={0.1} value={s.repelForce} onChange={(v) => patch({ repelForce: v })} />
+        <Slider label="Força dos links" min={0} max={1} step={0.01} value={s.linkForce} onChange={(v) => patch({ linkForce: v })} />
+        <Slider label="Distância dos links" min={30} max={500} step={1} value={s.linkDistance} onChange={(v) => patch({ linkDistance: v })} />
       </Section>
     </div>
   );

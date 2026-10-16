@@ -12,7 +12,7 @@ export default function TagsPanel() {
 
   return (
     <div style={{ padding: 8 }}>
-      {tags.length === 0 && <div style={{ color: 'var(--text-faint)', padding: 8 }}>No tags found</div>}
+      {tags.length === 0 && <div style={{ color: 'var(--text-faint)', padding: 8 }}>Nenhuma etiqueta encontrada</div>}
       {tags.map((t) => (
         <span
           key={t.tag}

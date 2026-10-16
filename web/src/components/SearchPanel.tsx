@@ -168,26 +168,26 @@ export default function SearchPanel() {
           <Icon name="search" size={15} className="search-lead" />
           <input
             className="search-input has-lead"
-            placeholder="Search   (try tag:idea, path:notes)"
+            placeholder="Pesquisar (ex.: tag:ideia, path:notas)"
             autoFocus
             value={q}
             onChange={(e) => setQ(e.target.value)}
           />
           <button
-            className={`search-icon-btn ${matchCase ? 'active' : ''}`}
-            title="Match case"
+            className={`search-icon-btn ${matchCase ? 'ativo' : ''}`}
+            title="Diferenciar maiúsculas/minúsculas"
             onClick={() => setMatchCase((v) => !v)}
           >
             Aa
           </button>
           {q && (
-            <button className="search-icon-btn" title="Clear" onClick={() => setQ('')}>
+            <button className="search-icon-btn" title="Limpar" onClick={() => setQ('')}>
               <Icon name="x" size={15} />
             </button>
           )}
           <button
-            className={`search-icon-btn ${showOptions ? 'active' : ''}`}
-            title="Search options"
+            className={`search-icon-btn ${showOptions ? 'ativo' : ''}`}
+            title="Opções de pesquisa"
             onClick={() => setShowOptions((v) => !v)}
           >
             <Icon name="sliders" size={15} />
@@ -197,11 +197,11 @@ export default function SearchPanel() {
         {showOptions && (
           <div className="search-options">
             <label className="search-opt">
-              <span>Collapse results</span>
+              <span>Recolher resultados</span>
               <input type="checkbox" checked={collapsed} onChange={(e) => setCollapsed(e.target.checked)} />
             </label>
             <label className="search-opt">
-              <span>Show more context</span>
+              <span>Mostrar mais contexto</span>
               <input type="checkbox" checked={moreContext} onChange={(e) => setMoreContext(e.target.checked)} />
             </label>
           </div>
@@ -226,7 +226,7 @@ export default function SearchPanel() {
                     {(Object.keys(SORT_LABELS) as SortMode[]).map((m) => (
                       <button
                         key={m}
-                        className={sort === m ? 'active' : ''}
+                        className={sort === m ? 'ativo' : ''}
                         onClick={() => {
                           setSort(m);
                           setSortOpen(false);
@@ -295,7 +295,7 @@ export default function SearchPanel() {
         })}
         <div ref={sentinel} />
         {visible < shown.length && (
-          <div className="search-more">Showing {visible} of {shown.length}…</div>
+          <div className="search-more">Exibindo {visible} of {shown.length}…</div>
         )}
       </div>
     </div>

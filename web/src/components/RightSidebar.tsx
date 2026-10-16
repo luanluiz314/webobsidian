@@ -9,10 +9,10 @@ const MD_RE = /\.(md|markdown)$/i;
 const name = (p: string) => p.split('/').pop()?.replace(MD_RE, '') ?? p;
 
 const TABS = [
-  { id: 'backlinks', icon: 'link', title: 'Backlinks' },
+  { id: 'backlinks', icon: 'link', title: 'Links de retorno' },
   { id: 'outgoing', icon: 'arrow-up-right', title: 'Outgoing links' },
-  { id: 'tags', icon: 'hash', title: 'Tags' },
-  { id: 'outline', icon: 'list', title: 'Outline' },
+  { id: 'tags', icon: 'hash', title: 'Etiquetas' },
+  { id: 'outline', icon: 'list', title: 'Estrutura' },
 ] as const;
 
 function Section({
@@ -92,12 +92,12 @@ function BacklinksPanel() {
     <>
       <div className="nav-header">
         <span className="nav-title">
-          {activePath && MD_RE.test(activePath) ? `Backlinks for ${name(activePath)}` : 'Backlinks'}
+          {activePath && MD_RE.test(activePath) ? `Backlinks for ${name(activePath)}` : 'Links de retorno'}
         </span>
       </div>
       <div className="sidebar-body">
-        <Section title="Linked mentions" count={linked.length} open={openLinked} onToggle={() => setOpenLinked(!openLinked)}>
-          {linked.length === 0 && <div className="panel-item">No backlinks found.</div>}
+        <Section title="Menções com link" count={linked.length} open={openLinked} onToggle={() => setOpenLinked(!openLinked)}>
+          {linked.length === 0 && <div className="panel-item">Nenhum link de retorno encontrado.</div>}
           {linked.map((b) => (
             <div key={b} className="mention-box">
               <div className="mention-src" onClick={() => openFile(b)}>
@@ -108,12 +108,12 @@ function BacklinksPanel() {
           ))}
         </Section>
         <Section
-          title="Unlinked mentions"
+          title="Menções sem link"
           count={unlinked.length}
           open={openUnlinked}
           onToggle={() => setOpenUnlinked(!openUnlinked)}
         >
-          {unlinked.length === 0 && <div className="panel-item">No unlinked mentions found.</div>}
+          {unlinked.length === 0 && <div className="panel-item">Nenhuma menção sem link encontrada.</div>}
           {unlinked.map((m) => (
             <div key={m.path} className="mention-box">
               <div className="mention-src" onClick={() => openFile(m.path)}>
@@ -190,7 +190,7 @@ function OutgoingPanel() {
           <span>Links</span>
           <span className="count">{links.length}</span>
         </div>
-        {links.length === 0 && <div className="panel-item">No outgoing links.</div>}
+        {links.length === 0 && <div className="panel-item">Nenhum link de saída.</div>}
         {links.map((t) => (
           <div key={t} className="outgoing-item" onClick={() => openWikilink(t)} title={resolved[t] ?? t}>
             <Icon name="file-text" size={14} />
@@ -199,12 +199,12 @@ function OutgoingPanel() {
         ))}
         {unresolved.length > 0 && (
           <div className="section-head" style={{ cursor: 'default' }}>
-            <span>Unresolved</span>
+            <span>Não resolvidos</span>
             <span className="count">{unresolved.length}</span>
           </div>
         )}
         {unresolved.map((t) => (
-          <div key={t} className="outgoing-item unresolved" onClick={() => openWikilink(t)} title="Not created yet — click to create">
+          <div key={t} className="outgoing-item unresolved" onClick={() => openWikilink(t)} title="Ainda não criado — clique para criar">
             <Icon name="file-plus" size={14} />
             <span>{t}</span>
           </div>
@@ -220,10 +220,10 @@ function OutlinePanel() {
   return (
     <>
       <div className="nav-header">
-        <span className="nav-title">Outline</span>
+        <span className="nav-title">Estrutura</span>
       </div>
       <div className="sidebar-body">
-        {heads.length === 0 && <div className="panel-item">No headings</div>}
+        {heads.length === 0 && <div className="panel-item">Nenhum título</div>}
         {heads.map((h, i) => (
           <div key={i} className="outline-item" style={{ paddingLeft: 10 + (h.level - 1) * 12 }}>
             {h.text}
@@ -244,7 +244,7 @@ export default function RightSidebar() {
         {TABS.map((t) => (
           <button
             key={t.id}
-            className={`right-tab ${rightPanel === t.id ? 'active' : ''}`}
+            className={`right-tab ${rightPanel === t.id ? 'ativo' : ''}`}
             title={t.title}
             onClick={() => setRightPanel(t.id)}
           >
@@ -257,7 +257,7 @@ export default function RightSidebar() {
       {rightPanel === 'tags' && (
         <>
           <div className="nav-header">
-            <span className="nav-title">Tags</span>
+            <span className="nav-title">Etiquetas</span>
           </div>
           <div className="sidebar-body">
             <TagsPanel />

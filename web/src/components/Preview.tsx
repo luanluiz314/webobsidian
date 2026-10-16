@@ -214,7 +214,7 @@ export default function Preview({ source }: { source?: string }) {
       x: e.clientX,
       y: e.clientY,
       items: [
-        { label: 'Copy', icon: 'file-text', onClick: () => sel && navigator.clipboard.writeText(sel).catch(() => {}) },
+        { label: 'Copiar', icon: 'file-text', onClick: () => sel && navigator.clipboard.writeText(sel).catch(() => {}) },
         ...(sel
           ? [{ label: `Search for “${sel.slice(0, 24)}”`, icon: 'search', onClick: () => setLeftPanel('search') }]
           : []),

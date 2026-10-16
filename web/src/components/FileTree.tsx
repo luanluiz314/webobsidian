@@ -35,7 +35,7 @@ function RenameInput({ node, onDone }: { node: TreeNode; onDone: () => void }) {
       await api.rename(node.path, to);
       closeTab(node.path);
     } catch (e: any) {
-      notify(e?.message ?? 'Rename failed');
+      notify(e?.message ?? 'Falha ao renomear');
     }
     await loadTree();
   };
@@ -98,12 +98,12 @@ async function moveItemsTo(paths: string[], targetDir: string): Promise<void> {
       closeTab(from);
       moved++;
     } catch (err: any) {
-      notify(err?.message ?? 'Move failed');
+      notify(err?.message ?? 'Falha ao mover');
     }
   }
   setSelected([]);
   await loadTree();
-  if (moved > 1) notify(`Moved ${moved} items`);
+  if (moved > 1) notify(`${moved} itens movidos`);
 }
 
 /** Visible tree rows in display order — used to resolve a Shift-click range. */
@@ -192,7 +192,7 @@ function Node({ node, depth }: { node: TreeNode; depth: number }) {
 
   const doDeleteMany = async () => {
     const paths = pruneDescendants(useStore.getState().selected);
-    if (!paths.length || !confirm(`Delete ${paths.length} item${paths.length > 1 ? 's' : ''}?`)) return;
+    if (!paths.length || !confirm(`Excluir ${paths.length} itens?`)) return;
     let n = 0;
     for (const p of paths) {
       const r = await api.remove(p).catch(() => null);
@@ -200,17 +200,17 @@ function Node({ node, depth }: { node: TreeNode; depth: number }) {
     }
     setSelected([]);
     await loadTree();
-    notify(`Deleted ${n} item${n > 1 ? 's' : ''}`);
+    notify(`Itens excluídos: ${n}`);
   };
   const doMoveMany = () => setMovePath(useStore.getState().selected);
 
   const doRename = () => setRenamingPath(node.path);
   const doDelete = async () => {
-    if (confirm(`Delete "${node.name}"?`)) {
+    if (confirm(`Excluir "${node.name}"?`)) {
       const r = await api.remove(node.path);
       closeTab(node.path);
       await loadTree();
-      notify(r.deleted ? 'Deleted permanently' : 'Moved to trash');
+      notify(r.deleted ? 'Excluído permanentemente' : 'Movido para a lixeira');
     }
   };
 
@@ -222,13 +222,13 @@ function Node({ node, depth }: { node: TreeNode; depth: number }) {
     const copyPath = dot > 0 ? `${node.path.slice(0, dot)} copy${node.path.slice(dot)}` : `${node.path} copy`;
     await api.write(copyPath, content);
     await loadTree();
-    notify('Made a copy');
+    notify('Cópia criada');
   };
   const doMove = () => setMovePath(node.path);
 
   const doClipboard = (mode: 'copy' | 'cut') => () => {
     setClipboard({ path: node.path, mode });
-    notify(mode === 'cut' ? 'Cut' : 'Copied');
+    notify(mode === 'cut' ? 'Recortado' : 'Copiado');
   };
   const doPaste = async () => {
     const clip = useStore.getState().clipboard;
@@ -236,7 +236,7 @@ function Node({ node, depth }: { node: TreeNode; depth: number }) {
     const targetDir = isFolder ? node.path : parentDir(node.path);
     // Never paste a folder into itself or one of its own descendants.
     if (clip.path === targetDir || targetDir === clip.path || targetDir.startsWith(`${clip.path}/`)) {
-      notify('Cannot paste into itself');
+      notify('Não é possível colar nele mesmo');
       return;
     }
     const base = clip.path.split('/').pop()!;
@@ -249,9 +249,9 @@ function Node({ node, depth }: { node: TreeNode; depth: number }) {
         closeTab(clip.path);
         setClipboard(null);
         await loadTree();
-        notify('Moved');
+        notify('Movido');
       } catch (e: any) {
-        notify(e?.message ?? 'Paste failed');
+        notify(e?.message ?? 'Falha ao colar');
       }
       return;
     }
@@ -261,19 +261,19 @@ function Node({ node, depth }: { node: TreeNode; depth: number }) {
     try {
       await api.copy(clip.path, to);
       await loadTree();
-      notify('Pasted');
+      notify('Colado');
     } catch (e: any) {
-      notify(e?.message ?? 'Paste failed');
+      notify(e?.message ?? 'Falha ao colar');
     }
   };
 
   const copyPath = () => {
     navigator.clipboard?.writeText(node.path).catch(() => {});
-    notify('Path copied');
+    notify('Caminho copiado');
   };
   const copyUrl = () => {
     navigator.clipboard?.writeText(`${location.origin}${pathToUrl(node.path)}`).catch(() => {});
-    notify('URL copied');
+    notify('URL copiada');
   };
 
   const onContext = (e: React.MouseEvent) => {
@@ -297,40 +297,40 @@ function Node({ node, depth }: { node: TreeNode; depth: number }) {
     if (!sel.includes(node.path)) { setSelected([node.path]); setSelectAnchor(node.path); }
     const items = isFolder
       ? [
-          { label: 'New note', onClick: () => newNote(node.path) },
-          { label: 'New canvas', onClick: () => newCanvas(node.path) },
-          { label: 'New folder', onClick: () => newFolder(node.path) },
+          { label: 'Nova nota', onClick: () => newNote(node.path) },
+          { label: 'Novo canvas', onClick: () => newCanvas(node.path) },
+          { label: 'Nova pasta', onClick: () => newFolder(node.path) },
           { label: '', separator: true },
-          { label: 'Copy', onClick: doClipboard('copy') },
-          { label: 'Cut', onClick: doClipboard('cut') },
-          ...(clipboard ? [{ label: 'Paste', onClick: doPaste }] : []),
+          { label: 'Copiar', onClick: doClipboard('copy') },
+          { label: 'Recortado', onClick: doClipboard('cut') },
+          ...(clipboard ? [{ label: 'Colar', onClick: doPaste }] : []),
           { label: '', separator: true },
-          { label: 'Rename…', onClick: doRename },
-          { label: 'Move folder to…', onClick: doMove },
-          { label: 'Copy path', onClick: copyPath },
-          { label: 'Copy URL path', onClick: copyUrl },
+          { label: 'Renomear…', onClick: doRename },
+          { label: 'Mover pasta para…', onClick: doMove },
+          { label: 'Copiar caminho', onClick: copyPath },
+          { label: 'Copiar caminho da URL', onClick: copyUrl },
           { label: '', separator: true },
-          { label: 'Delete', danger: true, onClick: doDelete },
+          { label: 'Excluir', danger: true, onClick: doDelete },
         ]
       : [
-          { label: 'Open', onClick: () => openFile(node.path) },
-          { label: 'Open to the right', onClick: () => openToSide(node.path) },
+          { label: 'Abrir', onClick: () => openFile(node.path) },
+          { label: 'Abrir à direita', onClick: () => openToSide(node.path) },
           { label: '', separator: true },
-          { label: bookmarks.includes(node.path) ? 'Remove bookmark' : 'Bookmark', onClick: () => toggleBookmark(node.path) },
+          { label: bookmarks.includes(node.path) ? 'Remover dos favoritos' : 'Adicionar aos favoritos', onClick: () => toggleBookmark(node.path) },
           ...(/\.(md|markdown|canvas)$/i.test(node.path)
             ? [{ label: 'Share…', icon: 'globe', onClick: () => setShareDialog(node.path) }]
             : []),
-          { label: 'Make a copy', onClick: doCopy },
+          { label: 'Criar uma cópia', onClick: doCopy },
           { label: '', separator: true },
-          { label: 'Copy', onClick: doClipboard('copy') },
-          { label: 'Cut', onClick: doClipboard('cut') },
-          ...(clipboard ? [{ label: 'Paste', onClick: doPaste }] : []),
+          { label: 'Copiar', onClick: doClipboard('copy') },
+          { label: 'Recortado', onClick: doClipboard('cut') },
+          ...(clipboard ? [{ label: 'Colar', onClick: doPaste }] : []),
           { label: '', separator: true },
-          { label: 'Rename…', onClick: doRename },
-          { label: 'Move file to…', onClick: doMove },
-          { label: 'Copy URL path', onClick: copyUrl },
+          { label: 'Renomear…', onClick: doRename },
+          { label: 'Mover arquivo para…', onClick: doMove },
+          { label: 'Copiar caminho da URL', onClick: copyUrl },
           { label: '', separator: true },
-          { label: 'Delete', danger: true, onClick: doDelete },
+          { label: 'Excluir', danger: true, onClick: doDelete },
         ];
     openContextMenu({ x: e.clientX, y: e.clientY, items });
   };
@@ -392,7 +392,7 @@ function Node({ node, depth }: { node: TreeNode; depth: number }) {
   return (
     <div className="tree-item">
       <div
-        className={`tree-row ${activePath === node.path ? 'active' : ''} ${isSelected ? 'selected' : ''} ${dropping ? 'drop-target' : ''}`}
+        className={`tree-row ${activePath === node.path ? 'ativo' : ''} ${isSelected ? 'selected' : ''} ${dropping ? 'drop-target' : ''}`}
         style={isCut ? { opacity: 0.5 } : undefined}
         data-path={node.path}
         draggable
@@ -496,7 +496,7 @@ export default function FileTree() {
     }, 60);
   }, [activePath, autoReveal, setExpanded]);
 
-  // "Reveal file in navigation": scroll + flash the row once its folders expand.
+  // "Localizar arquivo na navegação": scroll + flash the row once its folders expand.
   useEffect(() => {
     const onReveal = (e: Event) => {
       const path = (e as CustomEvent<{ path: string }>).detail?.path;
@@ -534,9 +534,9 @@ export default function FileTree() {
         closeTab(clip.path);
         setClipboard(null);
         await loadTree();
-        notify('Moved');
+        notify('Movido');
       } catch (e: any) {
-        notify(e?.message ?? 'Paste failed');
+        notify(e?.message ?? 'Falha ao colar');
       }
       return;
     }
@@ -544,9 +544,9 @@ export default function FileTree() {
     try {
       await api.copy(clip.path, name);
       await loadTree();
-      notify('Pasted');
+      notify('Colado');
     } catch (e: any) {
-      notify(e?.message ?? 'Paste failed');
+      notify(e?.message ?? 'Falha ao colar');
     }
   };
 
@@ -556,24 +556,24 @@ export default function FileTree() {
       x: e.clientX,
       y: e.clientY,
       items: [
-        { label: 'New note', onClick: () => newNote('') },
-        { label: 'New canvas', onClick: () => newCanvas('') },
-        { label: 'New folder', onClick: () => newFolder('') },
+        { label: 'Nova nota', onClick: () => newNote('') },
+        { label: 'Novo canvas', onClick: () => newCanvas('') },
+        { label: 'Nova pasta', onClick: () => newFolder('') },
         ...(clipboard
-          ? [{ label: '', separator: true }, { label: 'Paste', onClick: pasteToRoot }]
+          ? [{ label: '', separator: true }, { label: 'Colar', onClick: pasteToRoot }]
           : []),
       ],
     });
   };
 
-  if (!tree) return <div style={{ padding: 12, color: 'var(--text-faint)' }}>Loading…</div>;
+  if (!tree) return <div style={{ padding: 12, color: 'var(--text-faint)' }}>Carregando…</div>;
   if (!tree.children?.length)
     return (
       <div
         onContextMenu={onRootContext}
         style={{ padding: 12, color: 'var(--text-faint)', minHeight: '100%' }}
       >
-        Vault is empty.
+        O cofre está vazio.
       </div>
     );
   return (

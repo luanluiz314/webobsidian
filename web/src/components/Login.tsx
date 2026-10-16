@@ -19,7 +19,7 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
     e.preventDefault();
     setErr('');
     if (needSetup && password !== confirm) {
-      setErr('Passwords do not match');
+      setErr('As senhas não coincidem');
       return;
     }
     setBusy(true);
@@ -33,7 +33,7 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
       }
       onAuthed();
     } catch (e: any) {
-      setErr(e.message ?? 'Failed');
+      setErr(e.message ?? 'Falhou');
     } finally {
       setBusy(false);
     }
@@ -46,12 +46,12 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
           <Icon name="gem" size={40} />
         </div>
         <h1>WebObsidian</h1>
-        <p>{needSetup ? 'Set a master password to secure your vault' : 'Enter your password to unlock'}</p>
+        <p>{needSetup ? 'Defina uma senha mestra para proteger seu cofre' : 'Digite sua senha para desbloquear'}</p>
         <div className="err">{err}</div>
         <input
           className="text-input"
           type="password"
-          placeholder="Password"
+          placeholder="Senha"
           autoFocus
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -60,13 +60,13 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
           <input
             className="text-input"
             type="password"
-            placeholder="Confirm password"
+            placeholder="Confirme a senha"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
           />
         )}
         <button className="btn" type="submit" disabled={busy}>
-          {needSetup ? 'Create & Unlock' : 'Unlock'}
+          {needSetup ? 'Criar e desbloquear' : 'Desbloquear'}
         </button>
       </form>
     </div>

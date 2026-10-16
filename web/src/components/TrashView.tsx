@@ -20,7 +20,7 @@ export default function TrashView() {
     api
       .listTrash()
       .then((r) => setItems(r.items))
-      .catch((e) => notify(e.message || 'Failed to load trash'))
+      .catch((e) => notify(e.message || 'Falha ao carregar a lixeira'))
       .finally(() => setLoading(false));
   }, [notify]);
 
@@ -35,11 +35,11 @@ export default function TrashView() {
     setBusy(true);
     try {
       const r = await api.restoreTrash(it.path);
-      notify(`Restored ${r.restored}`);
+      notify(`Restaurados: ${r.restored}`);
       await loadTree();
       refresh();
     } catch (e: any) {
-      notify(e.message || 'Restore failed');
+      notify(e.message || 'Falha ao restaurar');
     } finally {
       setBusy(false);
     }
@@ -47,14 +47,14 @@ export default function TrashView() {
 
   const remove = async (it: TrashItem) => {
     if (busy) return;
-    if (!confirm(`Permanently delete "${it.name}"? This cannot be undone.`)) return;
+    if (!confirm(`Excluir "${it.name}" permanentemente? Esta ação não pode ser desfeita.`)) return;
     setBusy(true);
     try {
       await api.deleteTrashItem(it.path);
-      notify('Deleted permanently');
+      notify('Excluído permanentemente');
       refresh();
     } catch (e: any) {
-      notify(e.message || 'Delete failed');
+      notify(e.message || 'Falha ao excluir');
     } finally {
       setBusy(false);
     }
@@ -62,14 +62,14 @@ export default function TrashView() {
 
   const empty = async () => {
     if (busy || items.length === 0) return;
-    if (!confirm(`Empty trash? ${items.length} item(s) will be permanently deleted.`)) return;
+    if (!confirm(`Esvaziar lixeira? ${items.length} itens serão excluídos definitivamente.`)) return;
     setBusy(true);
     try {
       await api.emptyTrash();
-      notify('Trash emptied');
+      notify('Lixeira esvaziada');
       refresh();
     } catch (e: any) {
-      notify(e.message || 'Empty trash failed');
+      notify(e.message || 'Falha ao esvaziar a lixeira');
     } finally {
       setBusy(false);
     }
@@ -83,7 +83,7 @@ export default function TrashView() {
   const fmtDate = (ms: number) => {
     if (!ms) return '';
     const d = new Date(ms);
-    return isNaN(d.getTime()) ? '' : d.toLocaleString();
+    return isNaN(d.getTime()) ? '' : d.toLocaleString('pt-BR');
   };
 
   return (
@@ -91,19 +91,19 @@ export default function TrashView() {
       <div className="modal trash-view" onClick={(e) => e.stopPropagation()}>
         <div className="vh-head">
           <Icon name="trash" size={16} />
-          <div className="vh-title">Trash</div>
+          <div className="vh-title">Lixeira</div>
           <div className="vh-path">{items.length} item(s)</div>
-          <button className="tool-btn" title="Refresh" onClick={refresh}>
+          <button className="tool-btn" title="Atualizar" onClick={refresh}>
             <Icon name="refresh-cw" size={16} />
           </button>
-          <button className="tool-btn" title="Close" onClick={() => close(false)}>
+          <button className="tool-btn" title="Fechar" onClick={() => close(false)}>
             <Icon name="x" size={16} />
           </button>
         </div>
         <div className="trash-body">
-          {loading && <div className="vh-empty">Loading…</div>}
+          {loading && <div className="vh-empty">Carregando…</div>}
           {!loading && items.length === 0 && (
-            <div className="vh-empty">Trash is empty.</div>
+            <div className="vh-empty">A lixeira está vazia.</div>
           )}
           {!loading &&
             items.map((it) => (
@@ -119,15 +119,15 @@ export default function TrashView() {
                 </div>
                 <button
                   className="btn secondary trash-act"
-                  title="Restore to original location"
+                  title="Restaurar ao local original"
                   disabled={busy}
                   onClick={() => restore(it)}
                 >
-                  Restore
+                  Restaurar
                 </button>
                 <button
                   className="tool-btn trash-del"
-                  title="Delete permanently"
+                  title="Excluir permanentemente"
                   disabled={busy}
                   onClick={() => remove(it)}
                 >
@@ -138,10 +138,10 @@ export default function TrashView() {
         </div>
         <div className="vh-foot">
           <button className="btn secondary" onClick={() => close(false)}>
-            Close
+            Fechar
           </button>
           <button className="btn danger" onClick={empty} disabled={busy || items.length === 0}>
-            Empty trash
+            Esvaziar lixeira
           </button>
         </div>
       </div>

@@ -220,9 +220,9 @@ export default function Editor() {
           ],
         },
         { label: '', separator: true },
-        { label: 'Cut', onClick: cut },
-        { label: 'Copy', onClick: copy },
-        { label: 'Paste', onClick: paste },
+        { label: 'Recortado', onClick: cut },
+        { label: 'Copiar', onClick: copy },
+        { label: 'Colar', onClick: paste },
         { label: 'Select all', onClick: selectAll },
         ...(sel
           ? [

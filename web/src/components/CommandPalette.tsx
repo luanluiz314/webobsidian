@@ -48,27 +48,27 @@ export default function CommandPalette() {
 
   const commands: Cmd[] = useMemo(
     () => [
-      { id: 'new', title: 'New note', hint: '⌘N', run: () => newNote() },
-      { id: 'new-canvas', title: 'New canvas', run: () => newCanvas() },
-      { id: 'daily', title: 'Open today’s daily note', run: () => openDailyNote() },
-      { id: 'save', title: 'Save current file', hint: '⌘S', run: () => save() },
-      { id: 'bookmark', title: 'Bookmark current file', run: () => activePath && toggleBookmark(activePath) },
-      { id: 'split', title: 'Open current file to the right', run: () => activePath && openToSide(activePath) },
-      { id: 'search', title: 'Open search', run: () => setLeftPanel('search') },
-      { id: 'bookmarks', title: 'Open bookmarks & recent', run: () => setLeftPanel('bookmarks') },
-      { id: 'graph', title: 'Open graph view', run: () => setGraph(true) },
-      { id: 'settings', title: 'Open settings', run: () => setSettings(true) },
-      { id: 'trash', title: 'Open trash', run: () => setTrash(true) },
-      { id: 'reading', title: 'View: Reading mode', run: () => setViewMode('reading') },
-      { id: 'live', title: 'View: Live edit', run: () => setViewMode('live') },
-      { id: 'source', title: 'View: Source', run: () => setViewMode('source') },
-      { id: 'reindex', title: 'Rebuild search index', run: async () => {
-          notify('Rebuilding search index…', 0);
+      { id: 'new', title: 'Nova nota', hint: '⌘N', run: () => newNote() },
+      { id: 'new-canvas', title: 'Novo canvas', run: () => newCanvas() },
+      { id: 'daily', title: 'Abrir nota diária de hoje', run: () => openDailyNote() },
+      { id: 'save', title: 'Salvar arquivo atual', hint: '⌘S', run: () => save() },
+      { id: 'bookmark', title: 'Adicionar arquivo atual aos favoritos', run: () => activePath && toggleBookmark(activePath) },
+      { id: 'split', title: 'Abrir arquivo atual à direita', run: () => activePath && openToSide(activePath) },
+      { id: 'search', title: 'Abrir pesquisa', run: () => setLeftPanel('search') },
+      { id: 'bookmarks', title: 'Abrir favoritos e recentes', run: () => setLeftPanel('bookmarks') },
+      { id: 'graph', title: 'Abrir visualização em grafo', run: () => setGraph(true) },
+      { id: 'settings', title: 'Abrir configurações', run: () => setSettings(true) },
+      { id: 'trash', title: 'Abrir lixeira', run: () => setTrash(true) },
+      { id: 'reading', title: 'Visualização: leitura', run: () => setViewMode('reading') },
+      { id: 'live', title: 'Visualização: edição ao vivo', run: () => setViewMode('live') },
+      { id: 'source', title: 'Visualização: código-fonte', run: () => setViewMode('source') },
+      { id: 'reindex', title: 'Reconstruir índice de pesquisa', run: async () => {
+          notify('Reconstruindo índice de pesquisa…', 0);
           try {
             await api.reindex();
-            notify('Search index rebuilt');
+            notify('Índice de pesquisa reconstruído');
           } catch {
-            notify('Failed to rebuild search index');
+            notify('Falha ao reconstruir índice de pesquisa');
           }
         } },
     ],
@@ -135,7 +135,7 @@ export default function CommandPalette() {
               {it.hint && <span className="kbd">{it.hint}</span>}
             </div>
           ))}
-          {items.length === 0 && <div className="palette-item">No matches</div>}
+          {items.length === 0 && <div className="palette-item">Nenhum resultado</div>}
         </div>
       </div>
     </div>
