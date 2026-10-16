@@ -82,7 +82,7 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "xnohat",
+        "owner": "luanluiz314",
         "repo": "webobsidian"
       }
     ]
