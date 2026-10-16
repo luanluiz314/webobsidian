@@ -20,6 +20,7 @@
     "desktop:publish": "npm run build && npm --workspace desktop run dist:publish"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "concurrently": "^9.1.0"
   },
   "engines": {

@@ -1,0 +1,31 @@
+name: Playwright (manual)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Iniciar aplicação para testes
+        run: |
+          npm run start > /tmp/webobsidian-e2e.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:8787/healthz >/dev/null; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/webobsidian-e2e.log
+          exit 1
+      - run: npx playwright test --project=chromium-desktop
+      - name: Registrar logs na falha
+        if: failure()
+        run: tail -n 100 /tmp/webobsidian-e2e.log || true

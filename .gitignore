@@ -17,3 +17,7 @@ desktop/release/
 # Local agent runbooks/skills — may contain server creds; never commit.
 .claude/skills/
 report.md
+# Playwright (artefatos locais)
+/test-results/
+/playwright-report/
+/playwright/.cache/
