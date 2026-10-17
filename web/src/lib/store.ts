@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { api, type TreeNode, type ShareRecord } from './api';
+import { api, ApiError, type TreeNode, type ShareRecord } from './api';
 import { findNode } from './tree';
 
 /** Per-tab id so we can ignore the echo of our own server-pushed state change. */
@@ -285,6 +285,9 @@ let canSave = false;
 let suppressSave = false;
 let saveTimer: number | undefined;
 let lastSaved = '';
+// Revisão do documento carregado no painel principal; não é sincronizada entre abas.
+let activeRevision: string | null = null;
+let pendingNoteSave: Promise<void> | null = null;
 
 function scheduleSave(): void {
   window.clearTimeout(saveTimer);
@@ -483,10 +486,13 @@ export const useStore = create<AppState>()(
         // view — never read it as a note nor pollute Recent with it.
         const isFolder = findNode(get().tree, path)?.type === 'folder';
         let content = '';
+        let revision: string | null = null;
         if (!isFolder && TEXT_RE.test(path)) {
           const r = await api.read(path);
           content = typeof r === 'string' ? r : r.content;
+          revision = typeof r === 'string' ? null : r.revision;
         }
+        activeRevision = revision;
         const title = path.split('/').pop() ?? path;
         set((s) => {
           const tabs = s.tabs.find((t) => t.path === path) ? s.tabs : [...s.tabs, { path, title }];
@@ -522,11 +528,36 @@ export const useStore = create<AppState>()(
       setContent: (c) => set({ content: c, dirty: true }),
 
       save: async () => {
+        // Aguardar um salvamento em curso antes de salvar uma edição posterior.
+        if (pendingNoteSave) await pendingNoteSave;
         const { activePath, content, dirty } = get();
-        if (!activePath || !dirty) return;
-        if (!TEXT_RE.test(activePath)) return;
-        await api.write(activePath, content);
-        set({ dirty: false });
+        if (!activePath || !dirty || !TEXT_RE.test(activePath)) return;
+        if (!activeRevision) {
+          get().notify('Recarregue a nota antes de salvar: não foi possível conferir a revisão.', 7000);
+          throw new Error('Revisão inicial da nota indisponível');
+        }
+        const before = activeRevision;
+        const operation = (async () => {
+          const result = await api.write(activePath, content, before);
+          if (get().activePath === activePath) {
+            activeRevision = result.revision;
+            // Não declarar salvo um texto alterado enquanto a requisição estava em andamento.
+            set({ dirty: get().content !== content });
+          }
+        })();
+        pendingNoteSave = operation;
+        try {
+          await operation;
+        } catch (error) {
+          if (error instanceof ApiError && error.status === 409) {
+            get().notify('Conflito: esta nota mudou em outro dispositivo. Sua edição permanece aberta. Copie o texto antes de recarregar.', 10000);
+          } else {
+            get().notify('Falha ao salvar. Sua edição permanece aberta; verifique a conexão.', 8000);
+          }
+          throw error;
+        } finally {
+          if (pendingNoteSave === operation) pendingNoteSave = null;
+        }
       },
 
       createNote: async (path, body) => {
@@ -609,6 +640,7 @@ export const useStore = create<AppState>()(
         if (activePath && TEXT_RE.test(activePath)) {
           try {
             const r = await api.read(activePath);
+            activeRevision = typeof r === 'string' ? null : r.revision;
             set({ content: typeof r === 'string' ? r : r.content, dirty: false });
           } catch {
             set({

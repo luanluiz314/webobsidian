@@ -57,6 +57,7 @@ function EditorPane() {
 
 export default function Workspace() {
   const tabs = useStore((s) => s.tabs);
+  const recent = useStore((s) => s.recent);
   const activePath = useStore((s) => s.activePath);
   const openFile = useStore((s) => s.openFile);
   const closeTab = useStore((s) => s.closeTab);
@@ -291,7 +292,7 @@ export default function Workspace() {
       <div className="tab-bar">
         <span
           className="tab-new tab-ctl"
-          title={isMobile ? 'Open menu' : 'Toggle left sidebar (⌘\\)'}
+          title={isMobile ? 'Abrir menu de arquivos' : 'Toggle left sidebar (⌘\\)'}
           onClick={() => (isMobile ? setMobileDrawer('left') : toggleLeft())}
         >
           <Icon name={isMobile ? 'menu' : 'panel-left'} size={isMobile ? 20 : 16} />
@@ -334,7 +335,7 @@ export default function Workspace() {
         </span>
         <span className="grow" style={{ flex: 1 }} />
         <span
-          className="tab-new tab-ctl"
+          className="tab-new tab-ctl wo-advanced-action"
           title="Alternar barra lateral direita"
           onClick={() => (isMobile ? setMobileDrawer('right') : toggleRight())}
         >
@@ -372,6 +373,9 @@ export default function Workspace() {
                   <Icon name="columns" size={16} />
                 </button>
               )}
+              <button className="tool-btn wo-read-toggle" onClick={() => setViewMode(viewMode === 'reading' ? 'live' : 'reading')} title={viewMode === 'reading' ? 'Voltar para edição' : 'Ler nota'}>
+                <Icon name={viewMode === 'reading' ? 'pencil' : 'file-text'} size={16} /> {viewMode === 'reading' ? 'Editar' : 'Ler'}
+              </button>
               <div className="seg">
                 <button className={viewMode === 'source' ? 'ativo' : ''} onClick={() => setViewMode('source')} title="Código-fonte">
                   Código-fonte
@@ -404,7 +408,28 @@ export default function Workspace() {
               <div className="big">
                 <Icon name="file-text" size={48} />
               </div>
-              <p>Nenhum arquivo aberto — selecione uma nota ou pressione ⌘O</p>
+              <div className="wo-start">
+                <div className="wo-start-overline">Seu espaço de ideias</div>
+                <h1>O que vamos escrever hoje?</h1>
+                <p>Guarde suas ideias em um só lugar. Crie uma nota ou encontre algo que já escreveu.</p>
+                <div className="wo-start-actions">
+                  <button className="wo-new-note-btn" onClick={() => newNote()}><Icon name="plus" size={17} /> Nova nota</button>
+                  <button className="wo-action-secondary" onClick={() => { useStore.getState().setLeftPanel('search'); if (isMobile) setMobileDrawer('left'); else if (!useStore.getState().leftOpen) toggleLeft(); }}><Icon name="search" size={17} /> Pesquisar</button>
+                  <button className="wo-action-secondary" onClick={() => window.dispatchEvent(new Event('wo-show-shortcuts'))}><Icon name="command" size={17} /> Como usar</button>
+                </div>
+                {recent.length > 0 && (
+                  <div className="wo-start-recents">
+                    <h2>Notas recentes</h2>
+                    <div className="wo-recent-list">
+                      {recent.slice(0, 5).map((path) => (
+                        <button key={path} className="wo-recent-item" title={path} onClick={() => void openFile(path)}>
+                          <Icon name="file-text" size={16} /> {path.split('/').pop()?.replace(/\.(md|markdown)$/i, '') ?? path}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}

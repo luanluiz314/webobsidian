@@ -73,14 +73,14 @@ export default function Sidebar() {
       x: r.left,
       y: r.bottom + 4,
       items: [
-        { label: 'File name (A to Z)', icon: treeSort === 'name-asc' ? 'check' : undefined, onClick: () => setTreeSort('name-asc') },
-        { label: 'File name (Z to A)', icon: treeSort === 'name-desc' ? 'check' : undefined, onClick: () => setTreeSort('name-desc') },
+        { label: 'Nome do arquivo (A–Z)', icon: treeSort === 'name-asc' ? 'check' : undefined, onClick: () => setTreeSort('name-asc') },
+        { label: 'Nome do arquivo (Z–A)', icon: treeSort === 'name-desc' ? 'check' : undefined, onClick: () => setTreeSort('name-desc') },
         { label: '', separator: true },
-        { label: 'Modified time (new to old)', icon: treeSort === 'mtime-desc' ? 'check' : undefined, onClick: () => setTreeSort('mtime-desc') },
-        { label: 'Modified time (old to new)', icon: treeSort === 'mtime-asc' ? 'check' : undefined, onClick: () => setTreeSort('mtime-asc') },
+        { label: 'Modificação (mais recentes primeiro)', icon: treeSort === 'mtime-desc' ? 'check' : undefined, onClick: () => setTreeSort('mtime-desc') },
+        { label: 'Modificação (mais antigas primeiro)', icon: treeSort === 'mtime-asc' ? 'check' : undefined, onClick: () => setTreeSort('mtime-asc') },
         { label: '', separator: true },
-        { label: 'Created time (new to old)', icon: treeSort === 'ctime-desc' ? 'check' : undefined, onClick: () => setTreeSort('ctime-desc') },
-        { label: 'Created time (old to new)', icon: treeSort === 'ctime-asc' ? 'check' : undefined, onClick: () => setTreeSort('ctime-asc') },
+        { label: 'Criação (mais recentes primeiro)', icon: treeSort === 'ctime-desc' ? 'check' : undefined, onClick: () => setTreeSort('ctime-desc') },
+        { label: 'Criação (mais antigas primeiro)', icon: treeSort === 'ctime-asc' ? 'check' : undefined, onClick: () => setTreeSort('ctime-asc') },
       ],
     });
   };
@@ -94,30 +94,30 @@ export default function Sidebar() {
             <button className="nav-action" title="Nova nota" onClick={() => newNote()}>
               <Icon name="square-pen" size={16} />
             </button>
-            <button className="nav-action" title="Novo canvas" onClick={() => newCanvas()}>
+            <button className="nav-action wo-advanced-action" title="Novo canvas" onClick={() => newCanvas()}>
               <Icon name="layout-dashboard" size={16} />
             </button>
             <button className="nav-action" title="Nova pasta" onClick={() => newFolder()}>
               <Icon name="folder-plus" size={16} />
             </button>
-            <button className="nav-action" title="Change sort order" onClick={openSortMenu}>
+            <button className="nav-action wo-advanced-action" title="Ordenar arquivos" onClick={openSortMenu}>
               <Icon name="arrow-up-narrow-wide" size={16} />
             </button>
             <button
-              className={`nav-action ${autoReveal ? 'ativo' : ''}`}
-              title="Auto reveal current file"
+              className={`nav-action wo-advanced-action ${autoReveal ? 'ativo' : ''}` }
+              title="Localizar nota atual na árvore"
               onClick={() => toggleAutoReveal()}
             >
               <Icon name="crosshair" size={16} />
             </button>
             <button
-              className="nav-action"
-              title={allCollapsed ? 'Expand all' : 'Collapse all'}
+              className="nav-action wo-advanced-action"
+              title={allCollapsed ? 'Expandir todas as pastas' : 'Recolher todas as pastas'}
               onClick={toggleCollapseAll}
             >
               <Icon name={allCollapsed ? 'chevrons-up-down' : 'chevrons-down-up'} size={16} />
             </button>
-            <button className="nav-action" title="Lixeira" onClick={() => setTrash(true)}>
+            <button className="nav-action wo-advanced-action" title="Lixeira" onClick={() => setTrash(true)}>
               <Icon name="trash" size={16} />
             </button>
           </>

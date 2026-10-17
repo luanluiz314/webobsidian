@@ -71,7 +71,7 @@ export async function checkPassword(password: string): Promise<boolean> {
   // (1) Mật khẩu đăng nhập hiệu dụng.
   if (s.auth.userPasswordHash) {
     if (await verifyPassword(password, s.auth.userPasswordHash)) return true;
-  } else if (safeEqualStr(password, DEFAULT_PASSWORD)) {
+  } else if (process.env.NODE_ENV !== 'production' && safeEqualStr(password, DEFAULT_PASSWORD)) {
     return true;
   }
 

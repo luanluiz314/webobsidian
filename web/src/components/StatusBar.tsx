@@ -47,7 +47,7 @@ export default function StatusBar() {
   return (
     <div className="status-bar">
       {dirty && <span>Salvando…</span>}
-      {isText && <span>{words} words</span>}
+      {isText && <span>{words} palavras</span>}
       {isText && <span>{content.length} characters</span>}
       <span className="clickable" title="Sincronização Git" onClick={sync}>
         <Icon name="refresh-cw" size={13} style={syncing ? { animation: 'spin 1s linear infinite' } : undefined} />

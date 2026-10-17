@@ -17,6 +17,7 @@ import FolderPicker from './components/FolderPicker';
 import { loadPlugins } from './lib/plugins';
 import { initUrlSync } from './lib/urlsync';
 import { useIsMobile } from './lib/useIsMobile';
+import MobileQuickActions from './components/MobileQuickActions';
 
 export default function App() {
   const authed = useStore((s) => s.authed);
@@ -35,6 +36,23 @@ export default function App() {
   const toast = useStore((s) => s.toast);
   const [checking, setChecking] = useState(true);
   const [theme, setTheme] = useState<'theme-dark' | 'theme-light'>('theme-dark');
+  const [simpleMode, setSimpleMode] = useState(() => {
+    try { return window.localStorage.getItem('wo-simple-mode') !== 'false'; }
+    catch { return true; }
+  });
+  useEffect(() => {
+    const sync = (event: Event) => {
+      if (event instanceof CustomEvent && typeof event.detail?.simple === 'boolean') {
+        setSimpleMode(event.detail.simple);
+        return;
+      }
+      try { setSimpleMode(window.localStorage.getItem('wo-simple-mode') !== 'false'); }
+      catch { setSimpleMode(true); }
+    };
+    window.addEventListener('wo-ui-preferences-changed', sync);
+    window.addEventListener('storage', sync);
+    return () => { window.removeEventListener('wo-ui-preferences-changed', sync); window.removeEventListener('storage', sync); };
+  }, []);
 
   useEffect(() => {
     api
@@ -96,6 +114,11 @@ export default function App() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'F1') {
+        e.preventDefault();
+        window.dispatchEvent(new Event('wo-show-shortcuts'));
+        return;
+      }
       const mod = e.metaKey || e.ctrlKey;
       if (!mod) return;
       const k = e.key.toLowerCase();
@@ -172,12 +195,13 @@ export default function App() {
   ].filter(Boolean).join(' ');
 
   return (
-    <div className={theme}>
+    <div className={`${theme} ${simpleMode ? 'wo-simple' : ''}`}>
       <div className={appCls}>
         <Ribbon onTheme={() => setTheme((t) => (t === 'theme-dark' ? 'theme-light' : 'theme-dark'))} />
         {showLeft && <Sidebar />}
         <Workspace />
         {showRight && <RightSidebar />}
+        {isMobile && <MobileQuickActions openShortcuts={() => window.dispatchEvent(new Event('wo-show-shortcuts'))} />}
         {isMobile && mobileDrawer && (
           <div className="drawer-backdrop" onClick={() => setMobileDrawer(null)} />
         )}

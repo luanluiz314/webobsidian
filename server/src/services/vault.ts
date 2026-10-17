@@ -1,5 +1,6 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import { randomUUID } from 'node:crypto';
 import { getSettings } from './settings.js';
 
 export interface TreeNode {
@@ -153,9 +154,14 @@ export async function readFileBuffer(rel: string): Promise<Buffer> {
 export async function writeFileText(rel: string, content: string): Promise<void> {
   const abs = await resolveInVault(rel);
   await fs.mkdir(path.dirname(abs), { recursive: true });
-  const tmp = `${abs}.tmp-${Date.now()}`;
-  await fs.writeFile(tmp, content, 'utf8');
-  await fs.rename(tmp, abs);
+  // Nome único: duas gravações no mesmo milissegundo não usam o mesmo arquivo.
+  const tmp = `${abs}.tmp-${process.pid}-${randomUUID()}`;
+  try {
+    await fs.writeFile(tmp, content, 'utf8');
+    await fs.rename(tmp, abs);
+  } finally {
+    await fs.rm(tmp, { force: true }).catch(() => {});
+  }
 }
 
 export async function writeFileBuffer(rel: string, buf: Buffer): Promise<void> {

@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useStore } from '../lib/store';
 import { api } from '../lib/api';
 import Icon from './Icon';
+import ShortcutsPanel from './ShortcutsPanel';
+import InterfacePreferences from './InterfacePreferences';
 
-type Section = 'vault' | 'git' | 'api' | 'sharing' | 'plugins' | 'appearance' | 'account' | 'about';
+type Section = 'vault' | 'git' | 'api' | 'sharing' | 'plugins' | 'appearance' | 'account' | 'interface' | 'shortcuts' | 'about';
 
 export default function Settings() {
   const open = useStore((s) => s.settingsOpen);
@@ -15,6 +17,12 @@ export default function Settings() {
     if (open) api.getSettings().then(setSettings).catch(() => {});
   }, [open]);
 
+  useEffect(() => {
+    const show = () => { setSection('shortcuts'); setOpen(true); };
+    window.addEventListener('wo-show-shortcuts', show);
+    return () => window.removeEventListener('wo-show-shortcuts', show);
+  }, [setOpen]);
+
   if (!open) return null;
 
   return (
@@ -22,7 +30,7 @@ export default function Settings() {
       <div className="modal settings-modal" onClick={(e) => e.stopPropagation()}>
         <div className="settings-layout">
           <div className="settings-nav">
-            {(['vault', 'git', 'api', 'sharing', 'plugins', 'appearance', 'account', 'about'] as Section[]).map((s) => (
+            {(['interface', 'vault', 'appearance', 'shortcuts', 'git', 'api', 'sharing', 'plugins', 'account', 'about'] as Section[]).map((s) => (
               <button key={s} className={section === s ? 'ativo' : ''} onClick={() => setSection(s)}>
                 {labels[s]}
               </button>
@@ -36,6 +44,8 @@ export default function Settings() {
             {section === 'plugins' && <Plugins />}
             {settings && section === 'appearance' && <Appearance s={settings} />}
             {section === 'account' && <AccountSettings s={settings} reload={() => api.getSettings().then(setSettings)} />}
+            {section === 'interface' && <InterfacePreferences />}
+            {section === 'shortcuts' && <ShortcutsPanel />}
             {section === 'about' && <About />}
           </div>
         </div>
@@ -52,6 +62,8 @@ const labels: Record<Section, string> = {
   plugins: 'Plugins da comunidade',
   appearance: 'Aparência',
   account: 'Conta',
+  interface: 'Interface',
+  shortcuts: 'Atalhos',
   about: 'Sobre',
 };
 

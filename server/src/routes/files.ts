@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { revisionOfText, guardedWriteText } from '../services/guardedWrites.js';
 import multer from 'multer';
 import path from 'node:path';
 import { asyncHandler } from '../middleware/error.js';
@@ -51,7 +52,8 @@ filesRouter.get(
       if (resolved) rel = resolved;
     }
     if (vault.isTextFile(rel)) {
-      res.json({ path: rel, content: await vault.readFileText(rel), encoding: 'utf8' });
+      const content = await vault.readFileText(rel);
+      res.json({ path: rel, content, revision: revisionOfText(content), encoding: 'utf8' });
     } else {
       // Stream with Range support so embedded <video>/<audio> can seek.
       const abs = await vault.resolveInVault(rel);
@@ -63,14 +65,18 @@ filesRouter.get(
 filesRouter.put(
   '/content',
   asyncHandler(async (req, res) => {
-    const { path: rel, content } = req.body ?? {};
+    const { path: rel, content, expectedRevision } = req.body ?? {};
     if (typeof rel !== 'string' || typeof content !== 'string') {
       res.status(400).json({ error: 'path and content required' });
       return;
     }
-    await vault.writeFileText(rel, content);
+    if (expectedRevision !== undefined && typeof expectedRevision !== 'string') {
+      res.status(400).json({ error: 'expectedRevision deve ser uma string SHA-256' });
+      return;
+    }
+    const revision = await guardedWriteText(rel, content, expectedRevision);
     reindex({ upsert: rel, added: rel });
-    res.json({ ok: true, path: rel });
+    res.json({ ok: true, path: rel, revision });
   }),
 );
 

@@ -16,20 +16,20 @@ import {
 type Btn = { icon: IconName; title: string; run: () => void };
 
 const BUTTONS: Btn[] = [
-  { icon: 'heading', title: 'Heading', run: () => fmtPrefixLines('# ') },
-  { icon: 'bold', title: 'Bold', run: () => fmtInline('**') },
-  { icon: 'italic', title: 'Italic', run: () => fmtInline('*') },
-  { icon: 'list', title: 'Bullet list', run: () => fmtPrefixLines('- ') },
-  { icon: 'check-square', title: 'Checklist', run: () => fmtChecklist() },
-  { icon: 'quote', title: 'Quote', run: () => fmtPrefixLines('> ') },
-  { icon: 'brackets', title: 'Internal link', run: () => fmtInsert('[[]]', 2) },
-  { icon: 'link', title: 'Link', run: () => fmtLink() },
-  { icon: 'code', title: 'Inline code', run: () => fmtInline('`') },
-  { icon: 'hash', title: 'Tag', run: () => fmtInsert('#') },
-  { icon: 'indent-increase', title: 'Indent', run: () => fmtIndent() },
-  { icon: 'indent-decrease', title: 'Outdent', run: () => fmtOutdent() },
-  { icon: 'undo', title: 'Undo', run: () => fmtUndo() },
-  { icon: 'redo', title: 'Redo', run: () => fmtRedo() },
+  { icon: 'heading', title: 'Título', run: () => fmtPrefixLines('# ') },
+  { icon: 'bold', title: 'Negrito', run: () => fmtInline('**') },
+  { icon: 'italic', title: 'Itálico', run: () => fmtInline('*') },
+  { icon: 'list', title: 'Lista com marcadores', run: () => fmtPrefixLines('- ') },
+  { icon: 'check-square', title: 'Lista de tarefas', run: () => fmtChecklist() },
+  { icon: 'quote', title: 'Citação', run: () => fmtPrefixLines('> ') },
+  { icon: 'brackets', title: 'Link interno', run: () => fmtInsert('[[]]', 2) },
+  { icon: 'link', title: 'Inserir link', run: () => fmtLink() },
+  { icon: 'code', title: 'Código em linha', run: () => fmtInline('`') },
+  { icon: 'hash', title: 'Etiqueta', run: () => fmtInsert('#') },
+  { icon: 'indent-increase', title: 'Aumentar recuo', run: () => fmtIndent() },
+  { icon: 'indent-decrease', title: 'Diminuir recuo', run: () => fmtOutdent() },
+  { icon: 'undo', title: 'Desfazer', run: () => fmtUndo() },
+  { icon: 'redo', title: 'Refazer', run: () => fmtRedo() },
 ];
 
 function Buttons({ size }: { size: number }) {
@@ -39,6 +39,7 @@ function Buttons({ size }: { size: number }) {
         <button
           key={b.title}
           title={b.title}
+          aria-label={b.title}
           // Keep the editor focused / the keyboard open when a button is pressed.
           onPointerDown={(e) => e.preventDefault()}
           onClick={b.run}

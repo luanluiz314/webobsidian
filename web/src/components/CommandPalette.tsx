@@ -114,7 +114,7 @@ export default function CommandPalette() {
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <input
           className="palette-input"
-          placeholder={mode === 'commands' ? 'Run a command…' : 'Search files… (prefix > for commands)'}
+          placeholder={mode === 'commands' ? 'Executar um comando…' : 'Buscar arquivos… (use > para comandos)'}
           autoFocus
           value={q}
           onChange={(e) => setQ(e.target.value)}

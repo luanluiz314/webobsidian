@@ -1,0 +1,111 @@
+/* WebObsidian — interface simples e toque acessível (inspirado no Mobile UX). */
+.wo-shortcuts { max-width: 790px; padding: 5px 4px 32px; color: var(--text-normal); }
+.wo-section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.wo-section-heading h2 { font-size: 22px; margin: 0 0 8px; font-weight: 650; }
+.wo-section-heading p { color: var(--text-muted); font-size: 13px; line-height: 1.65; margin: 0 0 20px; }
+.wo-shortcuts-hint { border: 1px solid var(--bg-modifier-border); border-radius: 7px; padding: 6px 10px; font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+.wo-shortcuts-search-label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+.wo-shortcuts-search { box-sizing: border-box; width: 100%; min-height: 42px; border: 1px solid var(--bg-modifier-border); border-radius: 9px; padding: 0 13px; background: var(--bg-secondary); color: var(--text-normal); font: inherit; font-size: 14px; outline: none; }
+.wo-shortcuts-search:focus-visible { border-color: var(--interactive-accent); }
+.wo-shortcuts section { margin-top: 26px; }
+.wo-shortcuts section h3 { font-size: 12px; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 10px; }
+.wo-shortcut-list { border: 1px solid var(--bg-modifier-border); border-radius: 12px; overflow: hidden; }
+.wo-shortcut-item { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 15px; border-bottom: 1px solid var(--bg-modifier-border); }
+.wo-shortcut-item:last-child { border-bottom: 0; }
+.wo-shortcut-detail { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.wo-shortcut-detail strong { font-size: 13px; font-weight: 600; }
+.wo-shortcut-detail span { font-size: 12px; line-height: 1.45; color: var(--text-muted); }
+.wo-shortcut-keys { display: flex; gap: 4px; flex-shrink: 0; }
+.wo-shortcut-keys kbd { min-width: 25px; padding: 5px 6px; font-size: 12px; text-align: center; border: 1px solid var(--bg-modifier-border); border-bottom-width: 2px; border-radius: 5px; background: var(--bg-secondary); color: var(--text-normal); }
+.wo-no-shortcuts { padding: 16px 2px; color: var(--text-muted); }
+.wo-mobile-help { margin-top: 28px; padding: 16px; border-radius: 12px; background: var(--bg-secondary); border: 1px solid var(--bg-modifier-border); }
+.wo-mobile-help strong { font-size: 13px; }
+.wo-mobile-help p { margin: 7px 0 0; color: var(--text-muted); font-size: 12px; line-height: 1.65; }
+.wo-quick-actions { display: none; }
+@media (max-width: 768px) {
+  .wo-section-heading h2 { font-size: 20px; }
+  .wo-shortcut-item { align-items: flex-start; gap: 10px; padding: 12px 10px; }
+  .wo-shortcut-keys kbd { min-width: 20px; font-size: 11px; padding: 5px 4px; }
+  .wo-shortcut-detail strong { font-size: 12px; }
+  .wo-shortcuts-hint { display: none; }
+  .wo-quick-actions { display: block; position: fixed; bottom: calc(70px + env(safe-area-inset-bottom)); right: calc(16px + env(safe-area-inset-right)); z-index: 51; }
+  .wo-quick-fab { display: grid; place-items: center; height: 50px; width: 50px; border: 0; border-radius: 16px; background: var(--interactive-accent); color: #fff; box-shadow: 0 3px 16px rgba(0,0,0,.3); cursor: pointer; }
+  .wo-quick-fab:focus-visible, .wo-quick-menu button:focus-visible { outline: 2px solid var(--text-accent); outline-offset: 3px; }
+  .wo-quick-dismiss { position: fixed; inset: 0; z-index: -1; background: transparent; border: 0; }
+  .wo-quick-menu { position: absolute; right: 0; bottom: 60px; width: max-content; min-width: 174px; max-width: min(85vw, 280px); display: flex; flex-direction: column; gap: 3px; padding: 6px; border-radius: 13px; background: var(--bg-primary); border: 1px solid var(--bg-modifier-border); box-shadow: var(--shadow); }
+  .wo-quick-menu button { display: flex; gap: 10px; align-items: center; min-height: 44px; background: transparent; border: 0; border-radius: 8px; padding: 0 11px; font: inherit; font-size: 13px; text-align: left; color: var(--text-normal); cursor: pointer; }
+  .wo-quick-menu button:active { background: var(--bg-modifier-hover); }
+  .app.mobile .empty-state { padding: 12px 22px; text-align: center; }
+  .app.mobile .empty-state p { max-width: 300px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+  .app.mobile .format-toolbar, .mobile-toolbar { touch-action: pan-x; }
+  .mobile-toolbar button { min-width: 44px; }
+  .app.mobile .seg button { padding: 7px 6px; font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wo-quick-menu, .wo-quick-fab { transition: none; }
+}
+.wo-new-note-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 42px; border: 1px solid var(--interactive-accent); border-radius: 9px; color: white; background: var(--interactive-accent); padding: 9px 16px; font: inherit; cursor: pointer; }
+.wo-new-note-btn:hover { filter: brightness(1.06); }
+.wo-quick-fab, .wo-quick-menu { z-index: 1; }
+.wo-quick-dismiss { z-index: 0; }
+
+/* WebObsidian v5: interface mais simples, sem perda de recursos. */
+.wo-simple .wo-advanced-action { display: none !important; }
+.wo-simple .view-header .seg { display: none !important; }
+.wo-read-toggle { display: none !important; }
+.wo-simple .wo-read-toggle { display: inline-flex !important; align-items: center; gap: 6px; width: auto; min-width: 60px; padding: 0 10px; font-size: 12px; white-space: nowrap; }
+.wo-simple .tab-bar { background: var(--bg-primary); border-bottom: 1px solid var(--bg-modifier-border); }
+.wo-simple .app:not(.mobile) { --right-width: 0px; }
+.wo-simple .app:not(.mobile) > .right-sidebar { display: none; }
+.wo-simple .empty-state .big { display: none; }
+.wo-simple .ribbon { background: var(--bg-primary); border-right: 1px solid var(--bg-modifier-border); }
+.wo-simple .ribbon > button { border-radius: 9px; }
+.wo-simple .sidebar { background: var(--bg-secondary); }
+.wo-simple .nav-header { gap: 5px; }
+.wo-simple .nav-title { font-weight: 650; }
+.wo-simple .view-header { border-bottom-color: transparent; }
+.wo-simple .format-toolbar button { width: 34px; height: 34px; }
+.wo-simple .format-toolbar button:nth-child(n+10) { display: none; }
+.wo-simple .empty-state { text-align: left; }
+.wo-start { width: min(100%, 570px); padding: 28px 18px; text-align: left; }
+.wo-start-overline { color: var(--text-accent); text-transform: uppercase; font-size: 11px; letter-spacing: .12em; font-weight: 700; margin-bottom: 14px; }
+.wo-start h1 { font-size: clamp(25px, 3.1vw, 35px); font-weight: 680; line-height: 1.22; letter-spacing: -.035em; margin: 0 0 12px; color: var(--text-normal); }
+.wo-start p { font-size: 14px; line-height: 1.65; color: var(--text-muted); margin: 0 0 24px; }
+.wo-start-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.wo-action-secondary { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 15px; border: 1px solid var(--bg-modifier-border); border-radius: 9px; color: var(--text-normal); background: var(--bg-secondary); font: inherit; cursor: pointer; }
+.wo-action-secondary:hover { background: var(--bg-modifier-hover); }
+.wo-start-recents { margin-top: 35px; }
+.wo-start-recents h2 { font-size: 13px; font-weight: 650; color: var(--text-muted); margin: 0 0 10px; }
+.wo-recent-list { display: grid; gap: 4px; }
+.wo-recent-item { display: flex; gap: 9px; align-items: center; width: 100%; min-height: 41px; border: 0; border-radius: 9px; padding: 9px 10px; background: transparent; color: var(--text-normal); text-align: left; font: inherit; font-size: 13px; cursor: pointer; overflow-wrap: anywhere; }
+.wo-recent-item:hover { background: var(--bg-modifier-hover); }
+.wo-interface-settings { max-width: 700px; }
+.wo-interface-settings h2 { font-size: 22px; margin: 0 0 8px; }
+.wo-settings-intro { color: var(--text-muted); font-size: 13px; line-height: 1.6; margin: 0 0 23px; }
+.wo-mode-choices { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 13px; }
+.wo-mode-card { border: 1px solid var(--bg-modifier-border); border-radius: 14px; background: var(--bg-secondary); color: var(--text-normal); cursor: pointer; padding: 19px; display: flex; align-items: flex-start; flex-direction: column; text-align: left; min-height: 186px; gap: 10px; font: inherit; }
+.wo-mode-card.selected { border-color: var(--interactive-accent); box-shadow: inset 0 0 0 1px var(--interactive-accent); }
+.wo-mode-card strong { font-size: 17px; }
+.wo-mode-card span:not(.wo-mode-symbol) { font-size: 12px; line-height: 1.5; color: var(--text-muted); }
+.wo-mode-card .wo-mode-symbol { font-size: 21px; color: var(--text-accent); }
+.wo-mode-card em { font-size: 11px; font-style: normal; margin-top: auto; color: var(--text-accent); font-weight: 650; }
+.wo-mode-card:focus-visible, .wo-recent-item:focus-visible, .wo-action-secondary:focus-visible { outline: 2px solid var(--interactive-accent); outline-offset: 2px; }
+.wo-interface-help { margin-top: 27px; padding: 20px; background: var(--bg-secondary); border: 1px solid var(--bg-modifier-border); border-radius: 12px; }
+.wo-interface-help strong { font-size: 14px; }
+.wo-interface-help p { color: var(--text-muted); font-size: 13px; line-height: 1.6; margin: 9px 0 0; }
+.wo-mobile-bottom-nav { display: none; }
+@media (max-width: 768px) {
+  .wo-start { width: 100%; box-sizing: border-box; padding: 8px 7px 110px; }
+  .wo-start h1 { font-size: 28px; }
+  .wo-start p { font-size: 14px; }
+  .wo-simple .app.mobile .ribbon { border-right: 1px solid var(--bg-modifier-border); }
+  .wo-simple .wo-quick-actions { left: calc(11px + env(safe-area-inset-left)); right: calc(11px + env(safe-area-inset-right)); bottom: calc(10px + env(safe-area-inset-bottom)); }
+  .wo-simple .wo-quick-fab { display: none !important; }
+  .wo-simple .wo-mobile-bottom-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; padding: 6px 4px; border: 1px solid var(--bg-modifier-border); border-radius: 18px; background: var(--bg-primary); box-shadow: 0 5px 20px rgba(0,0,0,.22); }
+  .wo-mobile-bottom-nav button { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; min-height: 51px; border: 0; border-radius: 11px; background: transparent; color: var(--text-muted); font: inherit; font-size: 11px; cursor: pointer; }
+  .wo-mobile-bottom-nav button:active { color: var(--text-accent); background: var(--bg-modifier-hover); }
+  .wo-simple .view-header { gap: 1px; }
+  .wo-simple .wo-read-toggle { font-size: 11px; padding: 0 7px; }
+  .wo-mode-choices { grid-template-columns: 1fr; }
+  .wo-mode-card { min-height: 120px; padding: 14px; }
+}

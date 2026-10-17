@@ -68,7 +68,10 @@ export function parseCanvas(raw: string): CanvasData {
     const obj = JSON.parse(raw);
     const nodes = Array.isArray(obj?.nodes) ? (obj.nodes as CanvasNode[]) : [];
     const edges = Array.isArray(obj?.edges) ? (obj.edges as CanvasEdge[]) : [];
-    return { nodes, edges };
+    // Preserve metadados adicionais para round-trip com outros editores JSON Canvas.
+    return obj && typeof obj === 'object' && !Array.isArray(obj)
+      ? { ...obj, nodes, edges }
+      : { nodes, edges };
   } catch {
     return { nodes: [], edges: [] };
   }
@@ -76,7 +79,7 @@ export function parseCanvas(raw: string): CanvasData {
 
 /** Serialize to the pretty-printed JSON Obsidian writes (tab indent). */
 export function serializeCanvas(data: CanvasData): string {
-  return JSON.stringify({ nodes: data.nodes, edges: data.edges }, null, '\t');
+  return JSON.stringify({ ...data, nodes: data.nodes, edges: data.edges }, null, '\t');
 }
 
 /** 16-hex-char id, same shape Obsidian generates. `seed` keeps it deterministic. */

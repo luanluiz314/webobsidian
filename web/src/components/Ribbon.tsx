@@ -46,19 +46,22 @@ export default function Ribbon({ onTheme }: { onTheme: () => void }) {
       <button className={leftPanel === 'search' ? 'ativo' : ''} title="Pesquisar (⌘⇧F)" onClick={() => setLeftPanel('search')}>
         <Icon name="search" size={18} />
       </button>
-      <button title="Visualização em grafo" onClick={() => setGraph(true)}>
+      <button className="wo-advanced-action" title="Visualização em grafo" onClick={() => setGraph(true)}>
         <Icon name="graph" size={18} />
       </button>
-      <button className={leftPanel === 'bookmarks' ? 'ativo' : ''} title="Favoritos e recentes" onClick={() => setLeftPanel('bookmarks')}>
+      <button className={`wo-advanced-action ${leftPanel === 'bookmarks' ? 'ativo' : ''}`} title="Favoritos e recentes" onClick={() => setLeftPanel('bookmarks')}>
         <Icon name="bookmark" size={18} />
       </button>
-      <button title="Nota diária" onClick={() => openDailyNote()}>
+      <button className="wo-advanced-action" title="Nota diária" onClick={() => openDailyNote()}>
         <Icon name="calendar" size={18} />
       </button>
-      <button className={leftPanel === 'tags' ? 'ativo' : ''} title="Etiquetas" onClick={() => setLeftPanel('tags')}>
+      <button className={`wo-advanced-action ${leftPanel === 'tags' ? 'ativo' : ''}`} title="Etiquetas" onClick={() => setLeftPanel('tags')}>
         <Icon name="hash" size={18} />
       </button>
-      <button title="Paleta de comandos (⌘P)" onClick={() => setPalette(true, 'commands')}>
+      <button className="wo-advanced-action" title="Paleta de comandos (⌘P)" onClick={() => setPalette(true, 'commands')}>
+        <Icon name="command" size={18} />
+      </button>
+      <button title="Atalhos e ajuda (F1)" aria-label="Atalhos e ajuda" onClick={() => window.dispatchEvent(new Event('wo-show-shortcuts'))}>
         <Icon name="command" size={18} />
       </button>
       <div className="spacer" />
@@ -67,7 +70,7 @@ export default function Ribbon({ onTheme }: { onTheme: () => void }) {
           <Icon name="refresh-cw" size={18} style={syncing ? { animation: 'spin 1s linear infinite' } : undefined} />
         </button>
       )}
-      <button title="Alternar tema" onClick={onTheme}>
+      <button className="wo-advanced-action" title="Alternar tema" onClick={onTheme}>
         <Icon name="moon" size={18} />
       </button>
       <button title="Configurações" onClick={() => setSettings(true)}>
